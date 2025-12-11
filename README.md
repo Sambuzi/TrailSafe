@@ -77,7 +77,7 @@ npm run dev
 
 Il client Vite è configurato per proxyare `/api` a `http://localhost:3000`.
 
-Se vuoi posso procedere ad aggiungere l'autenticazione, la connessione a MongoDB, o uno scheletro per le entità (Trail, Report, User).
+
 
 
 
