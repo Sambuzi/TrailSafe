@@ -12,35 +12,56 @@ app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
 // Optional MongoDB connection
-const mongoUri = process.env.MONGODB_URI;
-if (mongoUri) {
-  mongoose.connect(mongoUri)
-    .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('MongoDB connection error:', err));
-} else {
-  console.log('MONGODB_URI not set — running without DB (in-memory samples)');
-}
+const startServer = async () => {
+  let connectedToRealMongo = false;
+  let mongoUri = process.env.MONGODB_URI;
 
-// Simple status route
-// Simple status route with DB info
-app.get('/api/status', (req, res) => {
-  const dbState = mongoose.connection ? mongoose.connection.readyState : 0;
-  res.json({
-    status: 'ok',
-    env: process.env.NODE_ENV || 'development',
-    db: {
-      readyState: dbState,
-      connected: dbState === 1
+  if (mongoUri) {
+    try {
+      await mongoose.connect(mongoUri);
+      console.log('Connected to MongoDB');
+      connectedToRealMongo = true;
+    } catch (err) {
+      console.error('MongoDB connection error:', err);
     }
+  }
+
+  // If no real Mongo connection, start an in-memory MongoDB for development
+  if (!connectedToRealMongo) {
+    try {
+      const { MongoMemoryServer } = require('mongodb-memory-server');
+      const mongod = await MongoMemoryServer.create();
+      mongoUri = mongod.getUri();
+      await mongoose.connect(mongoUri);
+      console.log('Started in-memory MongoDB for development');
+      // keep reference so it won't be gc'd
+      app.locals._mongod = mongod;
+    } catch (err) {
+      console.error('Failed to start in-memory MongoDB, falling back to in-memory samples:', err);
+    }
+  }
+
+  // Simple status route with DB info
+  app.get('/api/status', (req, res) => {
+    const dbState = mongoose.connection ? mongoose.connection.readyState : 0;
+    res.json({
+      status: 'ok',
+      env: process.env.NODE_ENV || 'development',
+      db: {
+        readyState: dbState,
+        connected: dbState === 1,
+        uri: process.env.MONGODB_URI ? 'external' : (mongoUri ? 'in-memory' : 'none')
+      }
+    });
   });
-});
 
-// Trails routes (in-memory sample)
-app.use('/api/trails', require('./routes/trails'));
+  // Routes
+  app.use('/api/trails', require('./routes/trails'));
+  app.use('/api/auth', require('./routes/auth'));
 
-// Auth routes
-app.use('/api/auth', require('./routes/auth'));
+  app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+  });
+};
 
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+startServer();
