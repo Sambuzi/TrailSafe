@@ -1,9 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
 const mongoose = require('mongoose');
 
-dotenv.config();
+// Load .env explicitly from this directory so running the server
+// from the repo root still picks up server/.env
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 app.use(cors());
