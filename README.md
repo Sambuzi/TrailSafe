@@ -53,4 +53,31 @@ La piattaforma permette di consultare mappe, ricevere avvisi dinamici e gestire 
 - **Vue.js**  
 - **Node.js**
 
+---
+
+**Setup iniziale (scaffold)**
+
+Ho aggiunto uno scaffolding minimale per cominciare subito a sviluppare:
+- `server/` — Express API (es. `GET /api/status`, `GET /api/trails`, `POST /api/trails/report`)
+- `client/` — Vue 3 + Vite minimal app che consuma le API
+
+Comandi rapidi (PowerShell):
+
+```powershell
+# Server
+cd server
+npm install
+npm run dev
+
+# In un altro terminale: Client
+cd client
+npm install
+npm run dev
+```
+
+Il client Vite è configurato per proxyare `/api` a `http://localhost:3000`.
+
+Se vuoi posso procedere ad aggiungere l'autenticazione, la connessione a MongoDB, o uno scheletro per le entità (Trail, Report, User).
+
+
 

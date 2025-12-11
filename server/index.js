@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 // Optional MongoDB connection
 const mongoUri = process.env.MONGODB_URI;
 if (mongoUri) {
-  mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
+  mongoose.connect(mongoUri)
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('MongoDB connection error:', err));
 } else {
@@ -22,12 +22,24 @@ if (mongoUri) {
 }
 
 // Simple status route
+// Simple status route with DB info
 app.get('/api/status', (req, res) => {
-  res.json({ status: 'ok', env: process.env.NODE_ENV || 'development' });
+  const dbState = mongoose.connection ? mongoose.connection.readyState : 0;
+  res.json({
+    status: 'ok',
+    env: process.env.NODE_ENV || 'development',
+    db: {
+      readyState: dbState,
+      connected: dbState === 1
+    }
+  });
 });
 
 // Trails routes (in-memory sample)
 app.use('/api/trails', require('./routes/trails'));
+
+// Auth routes
+app.use('/api/auth', require('./routes/auth'));
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
