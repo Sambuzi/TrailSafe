@@ -74,7 +74,10 @@
             this.error = body.error || 'Login fallito';
             return;
           }
-          this.$emit('login-success', body);
+            // salva token+user e vai a home
+            try { localStorage.setItem('ts_user', JSON.stringify(body)); } catch {}
+            this.$router && this.$router.push('/home');
+            this.$emit('login-success', body);
         } catch (e) {
           this.error = 'Server non raggiungibile';
         }
