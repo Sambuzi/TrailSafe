@@ -2,6 +2,7 @@
   "name": "trailsafe-client",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -11,6 +12,9 @@
     "vue": "^3.2.0"
   },
   "devDependencies": {
+    "@rollup/rollup-win32-x64-msvc": "^4.53.3",
+    "@vitejs/plugin-vue": "^6.0.3",
+    "rollup": "^4.53.3",
     "vite": "^5.0.0"
   }
 }
