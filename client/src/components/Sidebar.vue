@@ -1,55 +1,99 @@
 <template>
   <aside class="sidebar">
-    <div class="logo">TRAIL<br/>SAFE</div>
+    <div class="logo">
+      <span class="material-symbols-rounded">park</span>
+    </div>
+
     <nav>
-      <router-link class="nav-item" to="/home">🏠<span>Home</span></router-link>
-      <router-link class="nav-item" to="/trails">🔍<span>Explore</span></router-link>
-      <router-link class="nav-item" to="/home">🗺️<span>Map</span></router-link>
-      <router-link class="nav-item" to="/report">⚠️<span>Reports</span></router-link>
-      <router-link class="nav-item" to="/home">👤<span>Profile</span></router-link>
+      <router-link to="/home" class="item">
+        <span class="material-symbols-rounded">home</span>
+        <span class="label">Home</span>
+      </router-link>
+
+      <router-link to="/trails" class="item">
+        <span class="material-symbols-rounded">explore</span>
+        <span class="label">Explore</span>
+      </router-link>
+
+      <router-link to="/map" class="item">
+        <span class="material-symbols-rounded">map</span>
+        <span class="label">Map</span>
+      </router-link>
+
+      <router-link to="/profile" class="item">
+        <span class="material-symbols-rounded">person</span>
+        <span class="label">Profile</span>
+      </router-link>
     </nav>
-    <div class="spacer"></div>
-    <div class="bottom">v0.1</div>
   </aside>
 </template>
 
-<script>
-export default {
-  name: 'Sidebar'
-}
-</script>
-
 <style scoped>
 .sidebar {
-  width: 84px;
+  position: fixed;
+  left: 0;
+  top: 0;
   height: 100vh;
-  background: rgba(0,0,0,0.06);
+  width: 88px;
+  background: #ffffff;
+  border-right: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 16px 8px;
   box-sizing: border-box;
 }
+
 .logo {
-  font-weight: 700;
-  color: white;
-  text-align: center;
-  margin-bottom: 18px;
-  line-height: 1;
+  margin-bottom: 24px;
+  color: #1b5e20;
+  font-size: 28px;
 }
-nav { display:flex; flex-direction:column; gap:10px; width:100%; align-items:center }
-.nav-item {
-  width: 56px; height:56px; border-radius:12px; border:none; background: rgba(255,255,255,0.08);
-  color: white; display:flex; align-items:center; justify-content:center; font-size:18px; cursor:pointer;
+
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
-.nav-item span { display:none }
-.spacer { flex:1 }
-.bottom { color: rgba(255,255,255,0.7); font-size:12px }
 
-/* make sidebar darker on green background */
-.sidebar { background: rgba(0,0,0,0.12); }
+.item {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1b5e20;
+  text-decoration: none;
+}
 
+.item:hover,
+.item.router-link-active {
+  background: #e8f5e9;
+}
+
+.label {
+  display: none;
+}
+
+/* Desktop */
 @media (min-width: 900px) {
-  .nav-item span { display:block; font-size:12px; margin-left:8px }
+  .sidebar {
+    width: 260px;
+    align-items: flex-start;
+    padding: 24px;
+  }
+
+  .item {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .label {
+    display: inline;
+    font-size: 15px;
+  }
 }
 </style>
