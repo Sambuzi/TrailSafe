@@ -1,8 +1,9 @@
 <template>
   <aside class="sidebar">
     <div class="logo">
-      <span class="material-symbols-rounded">park</span>
+      <img src="../assets/logo.png" alt="TrailSafe logo" />
     </div>
+
 
     <nav>
       <router-link to="/home" class="item">
@@ -44,11 +45,6 @@
   box-sizing: border-box;
 }
 
-.logo {
-  margin-bottom: 24px;
-  color: #1b5e20;
-  font-size: 28px;
-}
 
 nav {
   display: flex;
@@ -96,4 +92,20 @@ nav {
     font-size: 15px;
   }
 }
+
+.logo {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
 </style>
