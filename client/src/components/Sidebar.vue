@@ -11,7 +11,7 @@
         <span class="label">Home</span>
       </router-link>
 
-      <router-link to="/trails" class="item">
+      <router-link to="/explore" class="item">
         <span class="material-symbols-rounded">explore</span>
         <span class="label">Explore</span>
       </router-link>
