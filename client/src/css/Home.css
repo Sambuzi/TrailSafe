@@ -34,6 +34,13 @@
   font-size: 14px;
 }
 
+/* Centered input inside the search card */
+.search-card .search-input {
+  width: 80%;
+  margin: 12px auto 0;
+  display: block;
+}
+
 /* METEO */
 .weather-info {
   margin-top: 12px;

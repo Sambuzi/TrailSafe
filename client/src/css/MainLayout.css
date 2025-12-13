@@ -18,3 +18,11 @@
     margin-left: 260px; /* sidebar desktop */
   }
 }
+
+/* TOPBAR */
+.main-area { flex: 1; display: flex; flex-direction: column }
+.topbar { display: flex; justify-content: flex-end; align-items: center; padding: 12px 20px; color: #fff }
+.topbar-right { margin-left: auto }
+
+/* ensure content stays below topbar */
+.content { padding-top: 0 }
