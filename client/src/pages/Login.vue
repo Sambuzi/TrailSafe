@@ -26,6 +26,7 @@
           <button class="btn tonal" type="button" @click="submit('admin')">
             Amministratore
           </button>
+          <router-link class="btn outline" to="/register">Registrati</router-link>
         </div>
       </form>
 
