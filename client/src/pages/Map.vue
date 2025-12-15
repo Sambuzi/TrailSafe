@@ -4,7 +4,7 @@
     <section class="map-container">
       <div class="map-placeholder">
         <!-- Qui in futuro andrai a montare la mappa (Leaflet, Mapbox, ecc.) -->
-        <p>Mappa</p>
+        <MapView />
       </div>
     </section>
 
@@ -47,12 +47,18 @@
 </template>
 
 <script>
-import '../css/Map.css'
+
+import MapView from '../components/MapView.vue'
 
 export default {
-  name: 'Map'
+ name: 'Map',
+  components: {
+    MapView
+  }
 }
+
+
 </script>
 
-
+<style src="../css/Map.css" scoped></style>
 
