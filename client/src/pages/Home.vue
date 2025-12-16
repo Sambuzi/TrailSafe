@@ -16,10 +16,17 @@
       <div class="card weather-card">
         <h2>Meteo</h2>
         <p>Condizioni attuali nella tua zona</p>
-        <!-- placeholder -->
-        <div class="weather-info">
-          ☁️ Nuvoloso – 12°C  
+        <div class="weather-info" v-if="weather">
+           <span>
+              {{ weather.description }} – {{ weather.temp }}°C
+           </span>
+           <img :src="`https://openweathermap.org/img/wn/${weather.icon}@2x.png`" alt="weather icon"/>
         </div>
+
+        <div class="weather-info" v-else>
+           Caricamento meteo...
+        </div>
+
       </div>
     </section>
 
@@ -41,6 +48,24 @@
 import '../css/Home.css'
 
 export default {
-  name: 'Home'
+  name: 'Home',
+
+  data() {
+    return {
+      weather: null
+    }
+  },
+
+  async mounted() {
+    try {
+      const res = await fetch('http://localhost:3000/api/weather')
+      const data = await res.json()
+      this.weather = data
+    } catch (err) {
+      console.error('Errore meteo:', err)
+    }
+  }
 }
+
+
 </script>
