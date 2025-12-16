@@ -1,15 +1,22 @@
 .layout {
   display: flex;
   min-height: 100vh;
+  height: 100vh;
   background: linear-gradient(135deg, #1f4037, #6bbf9c);
+  overflow: hidden; /* prevent page-level scrolling */
 }
 
 /* CONTENUTO PRINCIPALE */
 .content {
-  flex: 1;
-  padding: 24px;
+  flex: 1 1 auto;
+  padding: 12px; /* reduced padding to fit more vertically */
   margin-left: 88px; /* sidebar mobile */
   transition: margin-left 0.3s ease;
+  box-sizing: border-box;
+  height: calc(100vh - 64px); /* reserve space for topbar */
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
 }
 
 /* Desktop */
@@ -20,8 +27,8 @@
 }
 
 /* TOPBAR */
-.main-area { flex: 1; display: flex; flex-direction: column }
-.topbar { display: flex; justify-content: flex-end; align-items: center; padding: 12px 20px; color: #fff }
+.main-area { flex: 1 1 auto; display: flex; flex-direction: column; height: 100vh }
+.topbar { display: flex; justify-content: flex-end; align-items: center; padding: 12px 20px; color: #fff; height: 64px; }
 .topbar-right { margin-left: auto }
 
 /* ensure content stays below topbar */

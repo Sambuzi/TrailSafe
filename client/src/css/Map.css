@@ -2,6 +2,14 @@
   display: flex;
   gap: 24px;
   height: 100%; /* fill parent .content area */
+  align-items: stretch;
+  overflow: hidden; /* prevent page scrolling */
+}
+
+/* ensure the map page fills the parent's flex column and can shrink correctly */
+.map-page {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 /* MAPPA */
@@ -11,7 +19,56 @@
   border-radius: 16px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+  min-width: 0; /* allow flex child to shrink and not overflow the sidebar */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
+
+/* fixed-size variant used when we want to display only the map (no side panels)
+   keeps the map at a predictable height so it doesn't push other UI out */
+.map-container.map-fixed {
+  flex: 1 1 auto;
+  height: calc(100vh - 64px - 24px); /* viewport minus topbar and content padding */
+  max-height: calc(100vh - 64px - 24px);
+}
+
+/* overlay controls inside the map */
+.map-overlay-controls {
+  position: absolute;
+  right: 24px;
+  top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 1000; /* above leaflet controls */
+  pointer-events: none; /* enable click-through except on cards */
+}
+
+.map-overlay-controls .overlay-card {
+  pointer-events: auto;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 10px;
+  min-width: 220px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.overlay-search {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.overlay-row { display:flex; gap:8px; flex-wrap:wrap }
+.overlay-btn { padding:6px 10px; border-radius:10px; border:none; background:#e8f5e9; color:#1b5e20; cursor:pointer }
+.overlay-btn.active { background:#1b5e20; color:#fff }
+
+.overlay-select { width:100%; padding:8px 10px; border-radius:8px; border:1px solid #ccc }
+
+/* ensure absolute overlay sits inside the map container positioning context */
+.map-container { position: relative; }
 
 .map-placeholder {
   width: 100%;
@@ -24,12 +81,29 @@
   color: #1b5e20;
 }
 
+/* ensure the leaflet map element fills the container without causing scrollbars */
+.map-placeholder {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
 /* FILTRI */
 .filters-container {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+/* keep filters visible and prevent them from overlapping the map */
+.filters-container {
+  min-width: 0;
+  height: 100%;
+  box-sizing: border-box;
+  padding-left: 8px;
+  align-items: stretch;
+  justify-content: flex-start;
+  overflow: visible;
 }
 
 .filter-card {
@@ -116,8 +190,15 @@
   display: grid;
   gap: 12px;
   grid-template-columns: 1fr;
-  max-height: 50vh;
-  overflow-y: auto;
+  max-height: none; /* avoid internal scrolling */
+  overflow: visible;
+}
+
+/* make sure the internal leaflet map element fills the map container */
+#map, .map-placeholder > #map {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
 }
 
 .trail-card {

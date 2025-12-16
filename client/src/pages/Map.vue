@@ -1,14 +1,46 @@
 <template>
   <div class="map-page">
     <!-- AREA MAPPA -->
-    <section class="map-container">
+    <section :class="['map-container', { 'map-fixed': showMapOnly }]">
       <div class="map-placeholder">
         <!-- Qui in futuro andrai a montare la mappa (Leaflet, Mapbox, ecc.) -->
         <MapView :trails="trails" />
       </div>
 
+      <!-- floating controls shown over the map when in map-only mode -->
+      <div v-if="showMapOnly" class="map-overlay-controls">
+        <div class="overlay-card search-card">
+          <input v-model="filters.name" @input="onFiltersChange" class="overlay-search" placeholder="Cerca percorsi o luoghi..." />
+        </div>
+
+        <div class="overlay-card difficulty-card">
+          <div class="overlay-row">
+            <button
+              v-for="d in ['Easy','Facile','Medium','Hard']"
+              :key="d"
+              :class="['overlay-btn', { active: filters.difficulty === d }]"
+              @click="selectDifficulty(d)">
+              {{ d }}
+            </button>
+            <button class="overlay-btn" :class="{ active: filters.difficulty === '' }" @click="selectDifficulty('')">Tutte</button>
+          </div>
+        </div>
+
+        <div class="overlay-card km-card">
+          <label>Min km</label>
+          <select v-model.number="filters.min_km" @change="onFiltersChange" class="overlay-select">
+            <option :value="0">Qualsiasi distanza</option>
+            <option :value="1">Almeno 1 km</option>
+            <option :value="5">Almeno 5 km</option>
+            <option :value="10">Almeno 10 km</option>
+            <option :value="20">Almeno 20 km</option>
+            <option :value="50">Almeno 50 km</option>
+          </select>
+        </div>
+      </div>
+
       <!-- Lista card dei percorsi sincronizzati col DB -->
-      <div class="trail-list">
+      <div v-if="!showMapOnly" class="trail-list">
         <div v-if="trails.length === 0" class="no-trails">Nessun percorso trovato</div>
         <div v-for="trail in trails" :key="trail._id || trail.id" class="trail-card">
           <div class="trail-left">
@@ -35,7 +67,7 @@
     </section>
 
     <!-- AREA FILTRI -->
-    <section class="filters-container">
+    <section v-if="!showMapOnly" class="filters-container">
       <!-- Ricerca -->
       <div class="filter-card">
         <h3>Cerca</h3>
@@ -101,6 +133,8 @@ export default {
         difficulty: '',
         min_km: 0
       }
+      ,
+      showMapOnly: true
     }
   },
   mounted() {
