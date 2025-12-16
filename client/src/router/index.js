@@ -11,6 +11,7 @@ import TrailDetail from '../pages/TrailDetail.vue'
 import Report from '../pages/Report.vue'
 import Admin from '../pages/Admin.vue'
 import Profile from '../pages/Profile.vue'
+import Settings from '../pages/Settings.vue'
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -22,6 +23,7 @@ const routes = [
     children: [
       { path: 'home', component: Home },
       { path: 'profile', component: Profile },
+      { path: 'settings', component: Settings },
       { path: 'map', component: Map},
       { path: 'explore', component: AIExplore },
       { path: 'trail/:id', component: TrailDetail, props: true },
