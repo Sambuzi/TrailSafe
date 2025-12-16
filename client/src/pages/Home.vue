@@ -88,8 +88,8 @@ export default {
   },
 
   mounted() {
-    // carica meteo di default
-    this.loadWeather();
+    // prova a ottenere subito la posizione dell'utente
+    this.detectLocation();
   },
 
   methods: {
@@ -147,6 +147,8 @@ export default {
           console.error('Geolocation error', err);
           this.loadingWeather = false;
           this.weatherError = 'Impossibile ottenere la posizione';
+          // fallback: carica meteo di default dal server (es. regione preimpostata)
+          this.loadWeather();
         },
         { enableHighAccuracy: true, timeout: 10000 }
       );

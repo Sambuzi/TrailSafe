@@ -14,8 +14,9 @@ router.get('/', async (req, res) => {
     } else if (lat && lon) {
       weather = await getWeather(Number(lat), Number(lon));
     } else {
-      const dlat = 43.969;
-      const dlon = 12.693;
+      // Default to Trentino-Alto Adige center when no coordinates provided
+      const dlat = 46.350;
+      const dlon = 11.200;
       weather = await getWeather(dlat, dlon);
     }
 
