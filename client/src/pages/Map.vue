@@ -11,11 +11,24 @@
       <div class="trail-list">
         <div v-if="trails.length === 0" class="no-trails">Nessun percorso trovato</div>
         <div v-for="trail in trails" :key="trail._id || trail.id" class="trail-card">
-          <h4 class="trail-name">{{ trail.name }}</h4>
-          <div class="trail-meta">
-            <span>Difficoltà: {{ trail.difficulty || 'N/A' }}</span>
-            <span> • </span>
-            <span>{{ trail.length_km ? trail.length_km + ' km' : '—' }}</span>
+          <div class="trail-left">
+            <div class="trail-avatar">
+              <span class="material-symbols-rounded">terrain</span>
+            </div>
+          </div>
+
+          <div class="trail-body">
+            <h4 class="trail-name">{{ trail.name }}</h4>
+            <div class="trail-sub"> 
+              <span class="trail-difficulty chip">{{ trail.difficulty || 'N/A' }}</span>
+              <span class="trail-dot">•</span>
+              <span class="trail-length">{{ trail.length_km ? trail.length_km + ' km' : '—' }}</span>
+            </div>
+            <p class="trail-snippet" v-if="trail.status">Stato: {{ trail.status }}</p>
+          </div>
+
+          <div class="trail-actions">
+            <button class="btn-ghost" @click="() => { /* placeholder: show details */ }">Dettagli</button>
           </div>
         </div>
       </div>
