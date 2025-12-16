@@ -12,6 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
 const PORT = process.env.PORT || 3000;
 
 // Optional MongoDB connection
@@ -61,6 +62,8 @@ const startServer = async () => {
   // Routes
   app.use('/api/trails', require('./routes/trails'));
   app.use('/api/auth', require('./routes/auth'));
+  app.use('/api/weather', require('./routes/weather'));
+
 
   app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
