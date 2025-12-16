@@ -1,36 +1,100 @@
 <template>
   <div class="chat-page">
-    <!-- AREA MESSAGGI -->
+
     <div class="chat-messages">
       <div class="message ai">
         👋 Ciao! Descrivimi il percorso che cerchi e ti aiuterò.
       </div>
 
-      <div class="message user">
-        Vorrei un trekking facile vicino al mare, massimo 10 km.
-      </div>
-
-      <div class="message ai">
-        🌿 Ti consiglio un percorso costiero, difficoltà facile, 8 km,
-        adatto a principianti e con bel panorama.
+      <div
+        v-for="(msg, i) in messages"
+        :key="i"
+        :class="['message', msg.type]"
+      >
+        {{ msg.text }}
       </div>
     </div>
 
-    <!-- INPUT CHAT -->
     <div class="chat-input">
       <input
+        v-model="userMessage"
         type="text"
         placeholder="Scrivi qui il tuo messaggio..."
+        @keyup.enter="sendMessage"
       />
-      <button>Invia</button>
+      <button @click="sendMessage">Invia</button>
     </div>
+
   </div>
 </template>
+
 
 <script>
 import '../css/AIExplore.css'
 
 export default {
-  name: 'ChatAI'
+  name: 'ChatAI',
+
+  data() {
+    return {
+      userMessage: '',
+      messages: []
+    }
+  },
+
+  methods: {
+    async sendMessage() {
+      if (!this.userMessage.trim()) return;
+
+      // 1️⃣ mostra messaggio utente
+      this.messages.push({
+        type: 'user',
+        text: this.userMessage
+      });
+
+      const query = this.userMessage;
+      this.userMessage = '';
+
+      try {
+        // 2️⃣ chiamata backend AI
+        const res = await fetch('http://localhost:3000/api/ai/ai-search', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ query })
+        });
+
+        const trails = await res.json();
+
+        // 3️⃣ risposta AI
+        if (trails.length === 0) {
+          this.messages.push({
+            type: 'ai',
+            text: '😕 Non ho trovato percorsi adatti.'
+          });
+          return;
+        }
+
+        let response = '🌿 Ecco i percorsi più adatti:\n';
+        trails.forEach((trail, index) => {
+          response += `${index + 1}. "${trail.name}" - Difficoltà: ${trail.difficulty}, Lunghezza: ${trail.length_km} km\n`;
+        });
+
+        this.messages.push({
+          type: 'ai',
+          text: response
+        });
+
+      } catch (err) {
+        console.error(err);
+        this.messages.push({
+          type: 'ai',
+          text: '⚠️ Errore nel recupero dei percorsi.'
+        });
+      }
+    }
+  }
 }
 </script>
+
