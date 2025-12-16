@@ -1,11 +1,12 @@
 .chat-page {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 48px);
+  height: 100%; /* fill the parent .content area */
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 /* MESSAGGI */

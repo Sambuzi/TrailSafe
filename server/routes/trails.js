@@ -151,6 +151,51 @@ router.post('/', async (req, res) => {
   res.status(201).json(newTrail);
 });
 
+// Search with filters: difficulty, name (partial), min_km
+router.get('/search', async (req, res) => {
+  const { difficulty, name, min_km } = req.query;
+
+  if (mongoose.connection.readyState === 1) {
+    try {
+      const query = {};
+      if (difficulty) query.difficulty = difficulty;
+      if (name) query.name = { $regex: name, $options: 'i' };
+      if (min_km) query.length_km = { $gte: parseFloat(min_km) };
+
+      const items = await Trail.find(query).lean();
+      return res.json(items);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Search failed' });
+    }
+  }
+
+  // fallback to in-memory filtering
+  let items = inMemory.slice();
+  if (difficulty) items = items.filter(t => t.difficulty === difficulty);
+  if (name) items = items.filter(t => t.name.toLowerCase().includes(name.toLowerCase()));
+  if (min_km) items = items.filter(t => (t.length_km || 0) >= parseFloat(min_km));
+
+  res.json(items);
+});
+
+// Return distinct difficulties for building filter UI
+router.get('/difficulties', async (req, res) => {
+  if (mongoose.connection.readyState === 1) {
+    try {
+      const diffs = await Trail.distinct('difficulty');
+      return res.json(diffs);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Failed to get difficulties' });
+    }
+  }
+
+  // fallback
+  const diffs = Array.from(new Set(inMemory.map(t => t.difficulty))).filter(Boolean);
+  res.json(diffs);
+});
+
 
 
 // Export DEFINITIVO (uno solo!)
