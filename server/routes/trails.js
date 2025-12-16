@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const Trail = require('../models/Trail');
 const Report = require('../models/Report');
 
+
 // In-memory fallback
 let inMemory = [
   { id: 1, name: 'Sentiero dei Faggi', difficulty: 'Facile', status: 'Aperto' },
@@ -149,6 +150,8 @@ router.post('/', async (req, res) => {
   inMemory.push(newTrail);
   res.status(201).json(newTrail);
 });
+
+
 
 // Export DEFINITIVO (uno solo!)
 module.exports = router;
