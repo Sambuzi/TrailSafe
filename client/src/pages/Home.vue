@@ -12,19 +12,47 @@
         />
       </div>
 
+      <!-- Cerca città per meteo -->
+      <div class="card city-search-card">
+        <h2>Cerca città (Meteo)</h2>
+        <div class="city-search-row">
+          <input
+            v-model="cityQuery"
+            @keyup.enter="onSearchCity"
+            type="text"
+            placeholder="Inserisci il nome della città..."
+            class="city-search-input"
+          />
+          <button class="btn" @click="onSearchCity">Cerca</button>
+        </div>
+      </div>
+
       <!-- Meteo -->
       <div class="card weather-card">
         <h2>Meteo</h2>
-        <p>Condizioni attuali nella tua zona</p>
-        <div class="weather-info" v-if="weather">
-           <span>
-              {{ weather.description }} – {{ weather.temp }}°C
-           </span>
-           <img :src="`https://openweathermap.org/img/wn/${weather.icon}@2x.png`" alt="weather icon"/>
+        <p v-if="weather && weather.city">Condizioni per: <strong>{{ weather.city }}</strong></p>
+        <p v-else>Condizioni attuali nella tua zona</p>
+
+        <div class="geo-row">
+          <button class="btn geo-btn" @click="detectLocation">Usa la mia posizione</button>
         </div>
 
-        <div class="weather-info" v-else>
+        <div class="weather-info" v-if="loadingWeather">
            Caricamento meteo...
+        </div>
+
+        <div class="weather-info" v-else-if="weather">
+           <div class="weather-main">
+             <img :src="`https://openweathermap.org/img/wn/${weather.icon}@2x.png`" alt="weather icon"/>
+             <div class="weather-text">
+               <div class="weather-desc">{{ weather.description }}</div>
+               <div class="weather-temp">{{ weather.temp }}°C</div>
+             </div>
+           </div>
+        </div>
+
+        <div class="weather-info error" v-else-if="weatherError">
+           {{ weatherError }}
         </div>
 
       </div>
@@ -52,17 +80,76 @@ export default {
 
   data() {
     return {
-      weather: null
+      weather: null,
+      cityQuery: '',
+      loadingWeather: false,
+      weatherError: null
     }
   },
 
-  async mounted() {
-    try {
-      const res = await fetch('http://localhost:3000/api/weather')
-      const data = await res.json()
-      this.weather = data
-    } catch (err) {
-      console.error('Errore meteo:', err)
+  mounted() {
+    // carica meteo di default
+    this.loadWeather();
+  },
+
+  methods: {
+    async loadWeather(query) {
+      this.loadingWeather = true;
+      this.weatherError = null;
+
+      try {
+        let url;
+
+        if (query && typeof query === 'object' && query.lat && query.lon) {
+          url = `http://localhost:3000/api/weather?lat=${query.lat}&lon=${query.lon}`;
+        } else if (query && typeof query === 'string') {
+          url = `http://localhost:3000/api/weather?city=${encodeURIComponent(query)}`;
+        } else {
+          url = 'http://localhost:3000/api/weather';
+        }
+
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Fetch failed');
+        const data = await res.json();
+        this.weather = data;
+      } catch (err) {
+        console.error('Errore meteo:', err);
+        this.weatherError = 'Impossibile ottenere il meteo';
+        this.weather = null;
+      } finally {
+        this.loadingWeather = false;
+      }
+    },
+
+    onSearchCity() {
+      const city = (this.cityQuery || '').trim();
+      if (!city) return;
+      this.loadWeather(city);
+    }
+    ,
+
+    detectLocation() {
+      if (!navigator.geolocation) {
+        this.weatherError = 'Geolocalizzazione non supportata dal browser';
+        return;
+      }
+
+      this.loadingWeather = true;
+      this.weatherError = null;
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude: lat, longitude: lon } = position.coords;
+          this.cityQuery = '';
+          this.loadWeather({ lat, lon });
+        },
+        (err) => {
+          console.error('Geolocation error', err);
+          this.loadingWeather = false;
+          this.weatherError = 'Impossibile ottenere la posizione';
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
     }
   }
 }

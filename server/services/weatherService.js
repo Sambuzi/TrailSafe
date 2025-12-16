@@ -1,11 +1,20 @@
-const getWeather = async (lat, lon) => {
+const getWeather = async (lat, lonOrCity) => {
   const apiKey = process.env.OPENWEATHER_API_KEY;
 
   console.log('API KEY:', apiKey ? 'OK' : 'MISSING');
 
-  const url =
-    `https://api.openweathermap.org/data/2.5/weather` +
-    `?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
+  let url = `https://api.openweathermap.org/data/2.5/weather`;
+
+  // If first argument is a string, treat it as city name
+  if (typeof lat === 'string') {
+    const city = encodeURIComponent(lat);
+    url += `?q=${city}&units=metric&appid=${apiKey}`;
+  } else if (typeof lat === 'number' && typeof lonOrCity === 'number') {
+    const lon = lonOrCity;
+    url += `?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
+  } else {
+    throw new Error('Invalid arguments to getWeather');
+  }
 
   console.log('WEATHER URL:', url);
 

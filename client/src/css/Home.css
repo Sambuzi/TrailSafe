@@ -24,6 +24,17 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
 }
 
+.weather-card {
+  background: linear-gradient(135deg, #7ed56f 0%, #4bbf73 100%);
+  color: #033e1a;
+}
+
+.city-search-card {
+  background: #ffffff;
+  color: #0b3b2e;
+  padding: 16px;
+}
+
 /* SEARCH */
 .search-input {
   width: 100%;
@@ -33,6 +44,35 @@
   border: 1px solid #ccc;
   font-size: 14px;
 }
+
+.city-search-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.city-search-input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #cfd8d0;
+}
+
+.btn {
+  background: #2f8f62;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn:hover { filter: brightness(0.95); }
+
+.geo-row { margin-top: 10px; }
+.geo-btn { background: #114f3b; padding: 8px 12px; font-size: 14px; }
+.geo-btn:hover { filter: brightness(0.95); }
 
 /* Centered input inside the search card */
 .search-card .search-input {
@@ -47,6 +87,19 @@
   font-size: 16px;
   font-weight: 500;
 }
+
+.weather-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.weather-main img { width: 72px; height: 72px; }
+.weather-text { display: flex; flex-direction: column; }
+.weather-desc { text-transform: capitalize; font-size: 16px; }
+.weather-temp { font-size: 22px; font-weight: 700; }
+
+.weather-info.error { color: #5b0f0f; font-weight: 600; }
 
 /* ANNUNCI */
 .announcements-card ul {
