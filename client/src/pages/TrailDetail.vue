@@ -45,8 +45,31 @@ export default {
   },
   methods: {
     saveTrail() {
-      // Placeholder for saving the trail
-      alert('Percorso salvato! (funzionalità da implementare)');
+      const userData = JSON.parse(localStorage.getItem('ts_user') || '{}');
+      if (!userData.token) {
+        alert('Devi essere loggato per salvare un percorso');
+        this.$router.push('/login');
+        return;
+      }
+      fetch(`http://localhost:3000/api/auth/save-trail/${this.trail._id}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${userData.token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.message) {
+          alert('Percorso salvato!');
+        } else {
+          alert('Errore: ' + (data.error || 'Sconosciuto'));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Errore nel salvataggio');
+      });
     }
   }
 }

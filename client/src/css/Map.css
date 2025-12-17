@@ -303,6 +303,7 @@
 @media (max-width: 900px) {
   .trail-avatar { width:56px; height:56px }
   .trail-card { padding:12px }
+  .map-page { overflow-x: auto; }
 }
 
 .trail-name { margin: 0 0 6px 0; font-size: 16px }

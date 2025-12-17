@@ -73,3 +73,7 @@
 .chat-input button:hover {
   background: #2e7d32;
 }
+
+@media (max-width: 900px) {
+  .chat-page { overflow-x: auto; }
+}

@@ -19,5 +19,20 @@
 .setting-section { margin-bottom: 16px }
 .setting-section h3 { margin: 0 0 8px 0 }
 
+.settings-form { display: flex; flex-direction: column; gap: 12px }
+.settings-form label { display: flex; flex-direction: column; gap: 6px }
+.settings-form input, .settings-form select { padding: 8px; border: 1px solid #ddd; border-radius: 4px }
+.switch-label { flex-direction: row; align-items: center; justify-content: space-between }
+.switch { width: 40px; height: 20px; appearance: none; background: #ccc; border-radius: 10px; position: relative; cursor: pointer }
+.switch:checked { background: #1b5e20 }
+.switch::after { content: ''; position: absolute; width: 16px; height: 16px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: left 0.2s }
+.switch:checked::after { left: 22px }
+.form-actions { display: flex; gap: 8px; margin-top: 12px }
+
 .actions { display:flex; justify-content:flex-end; gap:12px }
 .btn-primary { background: #1b5e20; color: #fff; padding: 10px 14px; border-radius: 8px; border: none; cursor: pointer }
+.logout-btn { background: red; color: white }
+
+@media (max-width: 900px) {
+  .settings-page { overflow-x: auto; }
+}

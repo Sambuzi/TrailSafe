@@ -144,3 +144,9 @@ form {
     flex-direction: column;
   }
 }
+
+@media (max-width: 900px) {
+  .login-root {
+    overflow-x: auto;
+  }
+}
