@@ -31,6 +31,11 @@ export default {
     // layer group to manage polylines/markers
     this.trailsLayer = L.layerGroup().addTo(this.map);
 
+    // Define global function for popup button
+    window.viewTrailDetail = (id) => {
+      this.$router.push('/trail/' + id);
+    };
+
     // if parent passed trails already, draw them; otherwise fetch all
     if (this.trails && this.trails.length) {
       this.drawTrails(this.trails);
@@ -66,7 +71,7 @@ export default {
         const color = diff.includes('facile') || diff.includes('easy') ? '#2e7d32' : (diff.includes('hard') || diff.includes('difficile') ? '#b71c1c' : '#388e3c');
 
         const poly = L.polyline(latlngs, { color, weight: 4 })
-          .bindPopup(`<b>${trail.name}</b><br>${trail.difficulty || ''}`);
+          .bindPopup(`<b>${trail.name}</b><br>${trail.difficulty || ''}<br><button onclick="viewTrailDetail('${trail._id}')">Vedi dettaglio</button>`);
 
         poly.addTo(this.trailsLayer);
         bounds.extend(latlngs);
