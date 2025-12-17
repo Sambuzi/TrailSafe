@@ -18,10 +18,11 @@
           <label class="card-title">Difficoltà</label>
           <div class="overlay-row">
             <button
-              v-for="d in ['Easy','Facile','Medium','Hard']"
+              v-for="d in (difficulties && difficulties.length ? difficulties : ['Easy','Facile','Medium','Hard'])"
               :key="d"
               :class="['overlay-btn', { active: filters.difficulty === d }]"
-              @click="selectDifficulty(d)">
+              @click="selectDifficulty(d)"
+              :aria-pressed="filters.difficulty === d">
               {{ d }}
             </button>
             <button class="overlay-btn" :class="{ active: filters.difficulty === '' }" @click="selectDifficulty('')">Tutte</button>
@@ -170,7 +171,8 @@ export default {
       }
     },
     selectDifficulty(d) {
-      this.filters.difficulty = d;
+      // toggle selection: click same difficulty to clear filter
+      this.filters.difficulty = (this.filters.difficulty === d) ? '' : d;
       this.debouncedFetch();
     },
     onFiltersChange() {

@@ -30,6 +30,19 @@
           </div>
         </section>
 
+        <!-- Plan excursion modal -->
+        <div v-if="showPlanModal" class="plan-modal-overlay">
+          <div class="plan-modal">
+            <h3>Programma escursione</h3>
+            <p>Seleziona la data per l'escursione</p>
+            <input type="date" v-model="planDate" />
+            <div class="form-actions" style="margin-top:12px">
+              <button class="btn" @click="cancelPlan">Annulla</button>
+              <button class="btn filled" @click="submitPlan">Conferma</button>
+            </div>
+          </div>
+        </div>
+
         <section class="card stats-card">
           <h2 class="card-title">Statistiche</h2>
           <div class="stats-grid">
@@ -92,7 +105,11 @@ export default {
     return {
       user: null,
       savedTrails: [],
-      plannedExcursions: []
+      plannedExcursions: [],
+      // modal state for planning
+      showPlanModal: false,
+      planTrailId: null,
+      planDate: ''
     };
   },
 
@@ -137,6 +154,42 @@ export default {
         }
       } catch (err) {
         console.error('Failed to fetch profile', err);
+      }
+    }
+    ,
+    planExcursion(trailId) {
+      // open modal and default date to today
+      this.planTrailId = trailId;
+      const today = new Date();
+      this.planDate = today.toISOString().slice(0,10);
+      this.showPlanModal = true;
+    },
+    cancelPlan() {
+      this.showPlanModal = false;
+      this.planTrailId = null;
+      this.planDate = '';
+    },
+    async submitPlan() {
+      if (!this.planTrailId || !this.planDate) return alert('Seleziona una data valida');
+      try {
+        const res = await fetch('/api/auth/plan-excursion', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.user.token}`
+          },
+          body: JSON.stringify({ trailId: this.planTrailId, date: this.planDate })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Errore');
+        // refresh profile to show planned excursions
+        this.showPlanModal = false;
+        this.planTrailId = null;
+        this.planDate = '';
+        await this.fetchProfile();
+      } catch (err) {
+        console.error('Failed to plan excursion', err);
+        alert('Impossibile pianificare escursione');
       }
     }
   }
