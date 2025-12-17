@@ -10,10 +10,12 @@
       <!-- floating controls shown over the map when in map-only mode -->
       <div v-if="showMapOnly" class="map-overlay-controls">
         <div class="overlay-card search-card">
+          <label class="card-title">Cerca</label>
           <input v-model="filters.name" @input="onFiltersChange" class="overlay-search" placeholder="Cerca percorsi o luoghi..." />
         </div>
 
         <div class="overlay-card difficulty-card">
+          <label class="card-title">Difficoltà</label>
           <div class="overlay-row">
             <button
               v-for="d in ['Easy','Facile','Medium','Hard']"
@@ -27,7 +29,7 @@
         </div>
 
         <div class="overlay-card km-card">
-          <label>Min km</label>
+          <label class="km-label">Distanza minima</label>
           <select v-model.number="filters.min_km" @change="onFiltersChange" class="overlay-select">
             <option :value="0">Qualsiasi distanza</option>
             <option :value="1">Almeno 1 km</option>
