@@ -1,6 +1,7 @@
 <template>
   <div class="settings-page">
     <div class="settings-card">
+      <button class="back-btn" @click="$router.back()"></button>
       <h2>Impostazioni</h2>
 
       <section class="setting-section">
@@ -22,18 +23,12 @@
             <span>Notifiche</span>
             <input v-model="form.notificationsEnabled" type="checkbox" class="switch" />
           </label>
-          <div class="form-actions">
-            <button class="btn filled" type="submit">Salva</button>
+         <div class="form-actions">
+            <button type="button" class="logout-btn" @click="logout">Logout</button>
+            <button class="btn-primary" type="submit">Salva</button>
           </div>
-        </form>
-      </section>
 
-      <section class="setting-section">
-        <h3>Azioni</h3>
-        <div class="actions">
-          <button class="btn filled logout-btn" @click="logout">Logout</button>
-          <button class="btn-primary" @click="$router.back()">Torna indietro</button>
-        </div>
+        </form>
       </section>
     </div>
   </div>
@@ -76,6 +71,7 @@ export default {
           alert('Impostazioni salvate!');
           this.user.user = { ...this.user.user, ...data.user };
           localStorage.setItem('ts_user', JSON.stringify(this.user));
+          this.$router.back();
         } else {
           alert('Errore: ' + (data.error || 'Sconosciuto'));
         }

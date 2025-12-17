@@ -1,38 +1,225 @@
+/* =========================
+   MATERIAL 3 DESIGN TOKENS
+   ========================= */
+:root {
+  --md-primary: #1b5e20;
+  --md-on-primary: #ffffff;
+  --md-surface: #ffffff;
+  --md-surface-container: #f7f7f7;
+  --md-outline: #e0e0e0;
+  --md-on-surface: #1c1b1f;
+  --md-on-surface-variant: #5f6368;
+  --md-error: #d32f2f;
 
-.settings-page {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 24px;
-  box-sizing: border-box;
+  --md-radius-sm: 8px;
+  --md-radius-md: 12px;
+  --md-radius-lg: 20px;
+
+  --md-elevation-1: 0 1px 3px rgba(0,0,0,.12);
+  --md-elevation-2: 0 4px 12px rgba(0,0,0,.14);
 }
 
+
+/* =========================
+   CARD
+   ========================= */
 .settings-card {
   width: 100%;
   max-width: 920px;
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  background: var(--md-surface);
+  border-radius: var(--md-radius-lg);
+  padding: 28px;
+  box-shadow: var(--md-elevation-2);
+  position: relative;
+  margin: 0 auto;
 }
 
-.setting-section { margin-bottom: 16px }
-.setting-section h3 { margin: 0 0 8px 0 }
+/* =========================
+   BACK BUTTON (M3 ICON)
+   ========================= */
+.back-btn {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
 
-.settings-form { display: flex; flex-direction: column; gap: 12px }
-.settings-form label { display: flex; flex-direction: column; gap: 6px }
-.settings-form input, .settings-form select { padding: 8px; border: 1px solid #ddd; border-radius: 4px }
-.switch-label { flex-direction: row; align-items: center; justify-content: space-between }
-.switch { width: 40px; height: 20px; appearance: none; background: #ccc; border-radius: 10px; position: relative; cursor: pointer }
-.switch:checked { background: #1b5e20 }
-.switch::after { content: ''; position: absolute; width: 16px; height: 16px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: left 0.2s }
-.switch:checked::after { left: 22px }
-.form-actions { display: flex; gap: 8px; margin-top: 12px }
+.back-btn::before {
+  content: '←';
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--md-primary);
+}
 
-.actions { display:flex; justify-content:flex-end; gap:12px }
-.btn-primary { background: #1b5e20; color: #fff; padding: 10px 14px; border-radius: 8px; border: none; cursor: pointer }
-.logout-btn { background: red; color: white }
+.back-btn:hover {
+  background: rgba(27,94,32,.08);
+}
 
-@media (max-width: 900px) {
-  .settings-page { overflow-x: auto; }
+/* =========================
+   TYPOGRAPHY
+   ========================= */
+.settings-card h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 32px;
+  color: var(--md-on-surface);
+}
+
+.setting-section h3 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 16px;
+  color: var(--md-on-surface-variant);
+}
+
+/* =========================
+   FORM
+   ========================= */
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Base label */
+.settings-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: .9rem;
+  color: var(--md-on-surface-variant);
+}
+
+/* =========================
+   TEXT FIELD & SELECT
+   ========================= */
+.settings-form input[type="text"],
+.settings-form select {
+  height: 44px;
+  padding: 0 12px;
+  border-radius: var(--md-radius-sm);
+  border: 1px solid var(--md-outline);
+  background: var(--md-surface);
+  font-size: 1rem;
+  color: var(--md-on-surface);
+}
+
+.settings-form input:focus,
+.settings-form select:focus {
+  outline: none;
+  border-color: var(--md-primary);
+  box-shadow: 0 0 0 2px rgba(27,94,32,.15);
+}
+
+/* =========================
+   SWITCH (MATERIAL 3)
+   ========================= */
+.settings-form label.switch-label {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.switch {
+  width: 48px;
+  height: 28px;
+  appearance: none;
+  background: #c7c7c7;
+  border-radius: 14px;
+  position: relative;
+  cursor: pointer;
+  transition: background .2s ease;
+}
+
+.switch::after {
+  content: '';
+  width: 22px;
+  height: 22px;
+  background: #ffffff;
+  border-radius: 50%;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  transition: left .2s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,.3);
+}
+
+.switch:checked {
+  background: var(--md-primary);
+}
+
+.switch:checked::after {
+  left: 23px;
+}
+
+/* =========================
+   ACTIONS
+   ========================= */
+.form-actions {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  margin-top: 40px;
+}
+
+/* Logout (Tonal button) */
+.logout-btn {
+  grid-column: 2;
+  background: rgba(211,47,47,.1);
+  color: var(--md-error);
+  padding: 10px 18px;
+  border-radius: var(--md-radius-md);
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.logout-btn:hover {
+  background: rgba(211,47,47,.2);
+}
+
+/* Save (Filled button) */
+.btn-primary {
+  grid-column: 3;
+  justify-self: end;
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+  padding: 12px 22px;
+  border-radius: var(--md-radius-md);
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--md-elevation-1);
+}
+
+.btn-primary:hover {
+  box-shadow: var(--md-elevation-2);
+}
+
+/* =========================
+   MOBILE
+   ========================= */
+@media (max-width: 768px) {
+  .settings-card {
+    padding: 20px;
+  }
+
+  .form-actions {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .logout-btn,
+  .btn-primary {
+    width: 100%;
+    justify-self: center;
+  }
 }
