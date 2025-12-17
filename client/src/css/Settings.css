@@ -1,0 +1,23 @@
+
+.settings-page {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.settings-card {
+  width: 100%;
+  max-width: 920px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.setting-section { margin-bottom: 16px }
+.setting-section h3 { margin: 0 0 8px 0 }
+
+.actions { display:flex; justify-content:flex-end; gap:12px }
+.btn-primary { background: #1b5e20; color: #fff; padding: 10px 14px; border-radius: 8px; border: none; cursor: pointer }

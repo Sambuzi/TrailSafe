@@ -133,6 +133,23 @@ router.get('/', async (req, res) => {
   res.json(inMemory);
 });
 
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+  if (mongoose.connection.readyState === 1) {
+    try {
+      const trail = await Trail.findById(id).lean();
+      if (!trail) return res.status(404).json({ error: 'Trail not found' });
+      return res.json(trail);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Failed to fetch trail' });
+    }
+  }
+  const trail = inMemory.find(t => t.id == id);
+  if (!trail) return res.status(404).json({ error: 'Trail not found' });
+  res.json(trail);
+});
+
 router.post('/', async (req, res) => {
   if (mongoose.connection.readyState === 1) {
     try {
