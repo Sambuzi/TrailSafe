@@ -4,7 +4,7 @@ html, body, #app {
   width: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
+  overflow: hidden; /* disable both horizontal and vertical page scrolling */
 }
 
 .layout {
@@ -37,9 +37,13 @@ html, body, #app {
   right: 0;
   top: 64px; /* below topbar */
   bottom: 0;
-  padding: 12px;
+  padding: 12px 20px 24px 20px; /* more breathing room and bottom padding */
   box-sizing: border-box;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto; /* enable vertical scrolling so cards are not clipped */
+  overflow-x: hidden; /* prevent horizontal scrolling */
 }
 
 /* Desktop */
