@@ -213,6 +213,89 @@ router.get('/difficulties', async (req, res) => {
   res.json(diffs);
 });
 
+// GET /api/trails/popular - Percorsi più popolari (più salvati)
+router.get('/popular', async (req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(500).json({ error: 'Database not connected' });
+  }
+
+  try {
+    const User = require('../models/User');
+    
+    // Aggregation per contare quanti utenti hanno salvato ogni trail
+    const popularTrails = await User.aggregate([
+      { $unwind: '$savedTrails' },
+      { $group: { _id: '$savedTrails', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 5 },
+      {
+        $lookup: {
+          from: 'trails',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'trail'
+        }
+      },
+      { $unwind: '$trail' },
+      {
+        $project: {
+          _id: '$trail._id',
+          name: '$trail.name',
+          difficulty: '$trail.difficulty',
+          length_km: '$trail.length_km',
+          status: '$trail.status',
+          popularity: '$count'
+        }
+      }
+    ]);
+
+    res.json(popularTrails);
+  } catch (err) {
+    console.error('Error fetching popular trails:', err);
+    res.status(500).json({ error: 'Failed to get popular trails' });
+  }
+});
+
+
+
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  if (mongoose.connection.readyState === 1) {
+    try {
+      const trail = await Trail.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
+      if (!trail) return res.status(404).json({ error: 'Trail not found' });
+      return res.json(trail);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Failed to update trail' });
+    }
+  }
+
+  const index = inMemory.findIndex(t => t.id == id);
+  if (index === -1) return res.status(404).json({ error: 'Trail not found' });
+  inMemory[index] = { ...inMemory[index], ...req.body };
+  res.json(inMemory[index]);
+});
+
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  if (mongoose.connection.readyState === 1) {
+    try {
+      const trail = await Trail.findByIdAndDelete(id);
+      if (!trail) return res.status(404).json({ error: 'Trail not found' });
+      return res.json({ message: 'Trail deleted' });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Failed to delete trail' });
+    }
+  }
+
+  const index = inMemory.findIndex(t => t.id == id);
+  if (index === -1) return res.status(404).json({ error: 'Trail not found' });
+  inMemory.splice(index, 1);
+  res.json({ message: 'Trail deleted' });
+});
+
 
 
 // Export DEFINITIVO (uno solo!)

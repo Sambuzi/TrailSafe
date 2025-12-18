@@ -2,34 +2,19 @@
   <div class="home-container">
     <!-- SEZIONE SINISTRA -->
     <section class="home-left">
-      <!-- Barra di ricerca -->
-      <div class="card search-card">
-        <h2>Cerca un percorso</h2>
-        <input
-          type="text"
-          placeholder="Descrivi il percorso che cerchi..."
-          class="search-input"
-        />
-      </div>
-
-      <!-- Cerca città per meteo -->
-      <div class="card city-search-card">
-        <h2>Cerca città (Meteo)</h2>
+      <!-- Meteo -->
+      <div class="card weather-card">
+        <h2>Meteo</h2>
         <div class="city-search-row">
           <input
             v-model="cityQuery"
             @keyup.enter="onSearchCity"
             type="text"
-            placeholder="Inserisci il nome della città..."
+            placeholder="Cerca città per il meteo..."
             class="city-search-input"
           />
           <button class="btn" @click="onSearchCity">Cerca</button>
         </div>
-      </div>
-
-      <!-- Meteo -->
-      <div class="card weather-card">
-        <h2>Meteo</h2>
         <p v-if="weather && weather.city">Condizioni per: <strong>{{ weather.city }}</strong></p>
         <p v-else>Condizioni attuali nella tua zona</p>
 
@@ -55,6 +40,23 @@
            {{ weatherError }}
         </div>
 
+      </div>
+
+      <!-- Percorsi Popolari -->
+      <div class="card popular-trails-card">
+        <h2>Percorsi Popolari</h2>
+        <div v-if="loadingPopular" class="loading">Caricamento...</div>
+        <div v-else-if="popularTrails.length > 0">
+          <div v-for="trail in popularTrails" :key="trail._id" class="popular-trail-item">
+            <div class="trail-name">{{ trail.name }}</div>
+            <div class="trail-meta">
+              <span class="difficulty" :class="trail.difficulty.toLowerCase()">{{ trail.difficulty }}</span>
+              <span class="length">{{ trail.length_km }} km</span>
+              <span class="saves">{{ trail.popularity }} salvataggi</span>
+            </div>
+          </div>
+        </div>
+        <div v-else class="no-trails">Nessun percorso popolare trovato</div>
       </div>
     </section>
 
@@ -83,13 +85,16 @@ export default {
       weather: null,
       cityQuery: '',
       loadingWeather: false,
-      weatherError: null
+      weatherError: null,
+      popularTrails: [],
+      loadingPopular: false
     }
   },
 
   mounted() {
     // prova a ottenere subito la posizione dell'utente
     this.detectLocation();
+    this.loadPopularTrails();
   },
 
   methods: {
@@ -152,6 +157,21 @@ export default {
         },
         { enableHighAccuracy: true, timeout: 10000 }
       );
+    },
+
+    async loadPopularTrails() {
+      this.loadingPopular = true;
+      try {
+        const res = await fetch('http://localhost:3000/api/trails/popular');
+        if (!res.ok) throw new Error('Fetch failed');
+        const data = await res.json();
+        this.popularTrails = data;
+      } catch (err) {
+        console.error('Errore caricamento percorsi popolari:', err);
+        this.popularTrails = [];
+      } finally {
+        this.loadingPopular = false;
+      }
     }
   }
 }
