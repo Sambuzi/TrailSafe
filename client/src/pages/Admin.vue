@@ -9,41 +9,11 @@
 
     <div v-else-if="error" class="error">{{ error }}</div>
 
-    <div class="admin-content">
-      <div class="filters-section">
-        <div class="search-bar">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Cerca per nome..."
-            class="search-input"
-          />
-          <button @click="clearSearch" class="clear-btn" v-if="searchQuery">✕</button>
-        </div>
-        
-        <div class="filters">
-          <select v-model="difficultyFilter" class="filter-select">
-            <option value="">Tutte le difficoltà</option>
-            <option value="Facile">Facile</option>
-            <option value="Intermedio">Intermedio</option>
-            <option value="Difficile">Difficile</option>
-          </select>
-          
-          <select v-model="statusFilter" class="filter-select">
-            <option value="">Tutti gli stati</option>
-            <option value="Aperto">Aperto</option>
-            <option value="Chiuso">Chiuso</option>
-            <option value="Parzialmente chiuso">Parzialmente chiuso</option>
-          </select>
-          
-          <button @click="clearFilters" class="clear-filters-btn">Pulisci filtri</button>
-        </div>
-      </div>
-
+    <div v-else class="admin-content">
       <div class="stats-cards">
         <div class="stat-card">
-          <h3>{{ filteredTrails.length }}</h3>
-          <p>Risultati</p>
+          <h3>{{ trails.length }}</h3>
+          <p>Percorsi Totali</p>
         </div>
         <div class="stat-card">
           <h3>{{ trails.filter(t => t.status === 'Aperto').length }}</h3>
@@ -276,12 +246,6 @@ export default {
 
 ::-webkit-scrollbar-corner {
   background: var(--md-surface-container);
-}
-
-/* Firefox scrollbar */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--md-outline) var(--md-surface-container);
 }
 
 /* =========================
