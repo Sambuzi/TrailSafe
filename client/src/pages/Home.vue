@@ -78,31 +78,36 @@
     <div class="bottom-grid">
 
       <!-- PERCORSI SALVATI -->
-      <div class="card saved-trails-card">
-        <h2>Percorsi Salvati</h2>
+     <div class="card saved-trails-card">
+  <h2>I più popolari</h2>
 
-        <div v-if="loadingPopular" class="loading">
-          Caricamento...
-        </div>
+  <div class="saved-trails-scroll">
+    <div v-if="loadingPopular" class="loading">
+      Caricamento...
+    </div>
 
-        <div v-else-if="popularTrails.length">
-          <div
-            v-for="trail in popularTrails"
-            :key="trail._id"
-            class="trail-item"
-          >
-            <div class="trail-name">{{ trail.name }}</div>
-            <div class="trail-meta">
-              <span class="difficulty">{{ trail.difficulty }}</span>
-              <span>{{ trail.length_km }} km</span>
-            </div>
-          </div>
-        </div>
-
-        <div v-else class="no-trails">
-          Nessun percorso salvato
+    <div v-else-if="popularTrails.length">
+      <div
+        v-for="trail in popularTrails"
+        :key="trail._id"
+        class="trail-item"
+      >
+        <div class="trail-name">{{ trail.name }}</div>
+        <div class="trail-meta">
+          <span class="difficulty">{{ trail.difficulty }}</span>
+          <span>{{ trail.length_km }} km</span>
         </div>
       </div>
+    </div>
+
+    <div v-else class="no-trails">
+      Nessun percorso salvato
+    </div>
+  </div>
+</div>
+
+
+  
 
       <!-- ANNUNCI -->
       <div class="card announcements-card">

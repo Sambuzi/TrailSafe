@@ -189,33 +189,56 @@
 }
 
 /* =========================
-   PERCORSI SALVATI (FIX)
+   I PIÙ POPOLARI (SCROLL)
    ========================= */
 .saved-trails-card {
-  max-height: 380px;      /* PIÙ ALTA */
-  overflow-y: auto;       /* SCROLL INTERNO */
-  padding-right: 8px;     /* spazio scrollbar */
+  display: flex;
+  flex-direction: column;
+  height: 420px;             
 }
 
-.saved-trails-card::-webkit-scrollbar {
-  width: 6px;
+/* area scrollabile */
+.saved-trails-scroll {
+  flex: 1;                   
+  overflow-y: auto;
+  padding-right: 12px;
+  margin-top: 8px;
 }
 
-.saved-trails-card::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.25);
-  border-radius: 6px;
+/* scrollbar Material-like */
+.saved-trails-scroll::-webkit-scrollbar {
+  width: 8px;
 }
 
+.saved-trails-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.saved-trails-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.3);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.saved-trails-scroll:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.45);
+}
+
+/* singolo percorso */
 .trail-item {
   padding: 12px;
-  margin-bottom: 8px;
-  border-radius: 10px;
+  margin-bottom: 10px;
+  border-radius: 12px;
   background: var(--md-surface-container);
+  transition:  0.15s ease, box-shadow 0.15s ease;
 }
 
-.trail-name {
-  font-weight: 700;
+.trail-item:hover {
+  background: #eeeeee;
+  box-shadow: var(--md-elevation-1);
 }
+
 
 /* =========================
    ANNUNCI

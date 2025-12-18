@@ -56,8 +56,17 @@
 .stat-value{font-size:18px;font-weight:700;color:var(--md-sys-on-surface)}
 .stat-label{font-size:13px;color:var(--md-sys-secondary)}
 
-.saved-trails-card, .planned-excursions-card { max-height: 250px; overflow: hidden; }
-.saved-trails-card .trails-list, .planned-excursions-card .trails-list{display:flex;flex-direction:column;gap:12px;max-height:200px;overflow-y:auto}
+.saved-trails-card, .planned-excursions-card { 
+  max-height: 250px;
+  overflow: hidden; 
+}
+.saved-trails-card .trails-list, .planned-excursions-card .trails-list{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  max-height:200px;
+  overflow-y:auto
+}
 .trail-item{border:1px solid rgba(16,24,40,0.1);border-radius:8px;padding:12px}
 .trail-item h3{margin:0 0 4px 0;font-size:16px}
 .trail-item p{margin:4px 0;color:var(--md-sys-secondary)}

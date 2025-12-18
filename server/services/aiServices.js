@@ -27,6 +27,9 @@ function cosineSimilarity(vecA, vecB) {
   const normA = Math.sqrt(vecA.reduce((sum, val) => sum + val * val, 0));
   const normB = Math.sqrt(vecB.reduce((sum, val) => sum + val * val, 0));
 
+  // protezione contro divisione per zero
+  if (normA === 0 || normB === 0) return 0;
+
   return dot / (normA * normB);
 }
 

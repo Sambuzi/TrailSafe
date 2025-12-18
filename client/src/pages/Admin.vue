@@ -1,8 +1,21 @@
 <template>
   <div class="admin-page">
     <div class="admin-header">
-      <h1>Pannello Amministrazione - Gestione Percorsi</h1>
-      <button class="btn-primary add-trail-btn" @click="showAddForm = true">Aggiungi Percorso</button>
+    
+      <div class="admin-header">
+  <h1>Pannello Amministrazione - Gestione Percorsi</h1>
+
+  <div class="header-actions">
+    <button class="btn-secondary" @click="showFilterModal = true">
+      Filtri
+    </button>
+
+    <button class="btn-primary add-trail-btn" @click="showAddForm = true">
+      Aggiungi Percorso
+    </button>
+  </div>
+</div>
+
     </div>
 
     <div v-if="loading" class="loading">Caricamento percorsi...</div>
@@ -24,6 +37,8 @@
           <p>Percorsi Chiusi</p>
         </div>
       </div>
+  
+
 
       <div class="table-container">
         <table class="admin-table">
@@ -37,7 +52,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="trail in trails" :key="trail._id" :class="{ 'status-closed': trail.status === 'Chiuso' }">
+            <tr v-for="trail in filteredTrails" :key="trail._id" :class="{ 'status-closed': trail.status === 'Chiuso' }">
+
               <td class="trail-name">{{ trail.name }}</td>
               <td>
                 <span class="difficulty-badge" :class="getDifficultyClass(trail.difficulty)">
@@ -96,18 +112,79 @@
         </form>
       </div>
     </div>
+    <!-- MODAL FILTRI -->
+<div v-if="showFilterModal" class="modal-overlay" @click="closeFilterModal">
+  <div class="modal-content" @click.stop>
+    <h2>Filtra Percorsi</h2>
+
+    <div class="trail-form">
+      <div class="form-group">
+        <label>Difficoltà</label>
+        <select v-model="filters.difficulty">
+          <option value="">Tutte</option>
+          <option value="Facile">Facile</option>
+          <option value="Intermedio">Intermedio</option>
+          <option value="Difficile">Difficile</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Stato</label>
+        <select v-model="filters.status">
+          <option value="">Tutti</option>
+          <option value="Aperto">Aperto</option>
+          <option value="Chiuso">Chiuso</option>
+          <option value="Parzialmente chiuso">Parzialmente chiuso</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Lunghezza massima (km)</label>
+        <input
+          type="number"
+          min="0"
+          step="0.1"
+          v-model.number="filters.maxLength"
+          placeholder="Es. 10"
+        />
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-secondary" @click="resetFilters">
+          Reset
+        </button>
+        <button class="btn-primary" @click="closeFilterModal">
+          Applica
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
   </div>
 </template>
 <script>
 export default {
   name: 'Admin',
+
   data() {
     return {
       trails: [],
       loading: false,
       error: null,
+
+      /* ===== FILTRI ===== */
+      showFilterModal: false,
+      filters: {
+        difficulty: '',
+        status: '',
+        maxLength: null
+      },
+
+      /* ===== MODAL CRUD ===== */
       showAddForm: false,
       editingTrail: null,
+
       form: {
         name: '',
         difficulty: 'Facile',
@@ -116,20 +193,38 @@ export default {
       }
     };
   },
+
   created() {
     this.loadTrails();
   },
+
+  computed: {
+    filteredTrails() {
+      return this.trails.filter(trail => {
+        const byDifficulty =
+          !this.filters.difficulty ||
+          trail.difficulty === this.filters.difficulty;
+
+        const byStatus =
+          !this.filters.status ||
+          trail.status === this.filters.status;
+
+        const byLength =
+          !this.filters.maxLength ||
+          trail.length_km <= this.filters.maxLength;
+
+        return byDifficulty && byStatus && byLength;
+      });
+    }
+  },
+
   methods: {
     async loadTrails() {
       this.loading = true;
-      this.error = null;
       try {
         const res = await fetch('http://localhost:3000/api/trails');
-        if (!res.ok) throw new Error('Errore nel caricamento');
-        const data = await res.json();
-        this.trails = data;
-      } catch (err) {
-        console.error(err);
+        this.trails = await res.json();
+      } catch {
         this.error = 'Errore nel caricamento dei percorsi';
       } finally {
         this.loading = false;
@@ -137,21 +232,19 @@ export default {
     },
 
     getDifficultyClass(difficulty) {
-      const classes = {
-        'Facile': 'easy',
-        'Intermedio': 'medium',
-        'Difficile': 'hard'
-      };
-      return classes[difficulty] || 'easy';
+      return {
+        Facile: 'easy',
+        Intermedio: 'medium',
+        Difficile: 'hard'
+      }[difficulty] || 'easy';
     },
 
     getStatusClass(status) {
-      const classes = {
-        'Aperto': 'open',
-        'Chiuso': 'closed',
+      return {
+        Aperto: 'open',
+        Chiuso: 'closed',
         'Parzialmente chiuso': 'partial'
-      };
-      return classes[status] || 'open';
+      }[status] || 'open';
     },
 
     editTrail(trail) {
@@ -160,51 +253,47 @@ export default {
     },
 
     async deleteTrail(trail) {
-      if (!confirm(`Sei sicuro di voler eliminare "${trail.name}"?`)) return;
-
-      try {
-        const res = await fetch(`http://localhost:3000/api/trails/${trail._id}`, {
-          method: 'DELETE'
-        });
-        if (!res.ok) throw new Error('Errore nell\'eliminazione');
-        this.trails = this.trails.filter(t => t._id !== trail._id);
-        alert('Percorso eliminato con successo');
-      } catch (err) {
-        console.error(err);
-        alert('Errore nell\'eliminazione del percorso');
-      }
+      if (!confirm(`Eliminare "${trail.name}"?`)) return;
+      await fetch(`http://localhost:3000/api/trails/${trail._id}`, {
+        method: 'DELETE'
+      });
+      this.trails = this.trails.filter(t => t._id !== trail._id);
     },
 
     async saveTrail() {
-      try {
-        const method = this.editingTrail ? 'PUT' : 'POST';
-        const url = this.editingTrail
-          ? `http://localhost:3000/api/trails/${this.editingTrail._id}`
-          : 'http://localhost:3000/api/trails';
+      const isEdit = Boolean(this.editingTrail);
+      const url = isEdit
+        ? `http://localhost:3000/api/trails/${this.editingTrail._id}`
+        : 'http://localhost:3000/api/trails';
 
-        const res = await fetch(url, {
-          method,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(this.form)
-        });
+      const res = await fetch(url, {
+        method: isEdit ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(this.form)
+      });
 
-        if (!res.ok) throw new Error('Errore nel salvataggio');
+      const saved = await res.json();
 
-        const savedTrail = await res.json();
-
-        if (this.editingTrail) {
-          const index = this.trails.findIndex(t => t._id === this.editingTrail._id);
-          this.trails.splice(index, 1, savedTrail);
-        } else {
-          this.trails.push(savedTrail);
-        }
-
-        this.closeModal();
-        alert('Percorso salvato con successo');
-      } catch (err) {
-        console.error(err);
-        alert('Errore nel salvataggio del percorso');
+      if (isEdit) {
+        const i = this.trails.findIndex(t => t._id === saved._id);
+        this.trails.splice(i, 1, saved);
+      } else {
+        this.trails.push(saved);
       }
+
+      this.closeModal();
+    },
+
+    resetFilters() {
+      this.filters = {
+        difficulty: '',
+        status: '',
+        maxLength: null
+      };
+    },
+
+    closeFilterModal() {
+      this.showFilterModal = false;
     },
 
     closeModal() {
@@ -218,8 +307,9 @@ export default {
       };
     }
   }
-}
+};
 </script>
+
 <style scoped>
 /* =========================
    CUSTOM SCROLLBARS
@@ -588,4 +678,63 @@ export default {
     overflow-y: auto;
   }
 }
+
+/* =========================
+   FILTERS (Material 3)
+   ========================= */
+.filters-card {
+  background: var(--md-surface);
+  padding: 16px;
+  border-radius: var(--md-radius-lg);
+  box-shadow: var(--md-elevation-1);
+  border: 1px solid var(--md-outline);
+  margin-bottom: 24px;
+}
+
+.filters-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 160px;
+}
+
+.filter-group label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--md-on-surface-variant);
+}
+
+.filter-group select,
+.filter-group input {
+  padding: 10px 12px;
+  border-radius: var(--md-radius-sm);
+  border: 1px solid var(--md-outline);
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+}
+
+.filter-actions {
+  margin-left: auto;
+}
+
+.reset-btn {
+  background: transparent;
+  border: 1px solid var(--md-outline);
+  color: var(--md-on-surface);
+  padding: 10px 16px;
+  border-radius: var(--md-radius-md);
+  cursor: pointer;
+}
+
+.reset-btn:hover {
+  background: var(--md-surface-container);
+}
+
 </style>
