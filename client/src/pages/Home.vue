@@ -56,17 +56,24 @@
             <div class="value">{{ weather.vis_km }} km</div>
           </div>
         </div>
+        <div class="weather-toggle-row">
+  <button class="btn geo-btn" @click="toggleHourly">
+    {{ showHourly ? 'Nascondi meteo giornaliero' : 'Vedi meteo per tutta la giornata' }}
+  </button>
+</div>
 
-        <div class="hourly-section" v-if="weather.hourly?.length">
-          <h3>Prossime 24 ore</h3>
-          <div class="hourly-row">
-            <div class="hour-item" v-for="h in weather.hourly" :key="h.dt">
-              <div class="hour">{{ formatHour(h.dt) }}</div>
-              <img :src="h.icon" />
-              <div class="temp">{{ Math.round(h.temp) }}°</div>
-            </div>
-          </div>
-        </div>
+
+       <div class="hourly-section" v-if="showHourly && weather.hourly?.length">
+  <h3>Prossime 24 ore</h3>
+  <div class="hourly-row">
+    <div class="hour-item" v-for="h in weather.hourly" :key="h.dt">
+      <div class="hour">{{ formatHour(h.dt) }}</div>
+      <img :src="h.icon" />
+      <div class="temp">{{ Math.round(h.temp) }}°</div>
+    </div>
+  </div>
+</div>
+
       </div>
 
       <div v-else-if="weatherError" class="weather-info error">
@@ -128,27 +135,40 @@ import '../css/Home.css'
 
 export default {
   name: 'Home',
+
   data() {
     return {
       weather: null,
       cityQuery: '',
       loadingWeather: false,
       weatherError: null,
+
+      showHourly: false, // 👈 toggle meteo giornaliero
+
       popularTrails: [],
       loadingPopular: false
     }
   },
+
   mounted() {
     this.detectLocation()
     this.loadPopularTrails()
   },
+
   methods: {
+    toggleHourly() {
+      this.showHourly = !this.showHourly
+    },
+
     async loadWeather(query) {
       this.loadingWeather = true
+      this.showHourly = false // reset quando carichi nuovo meteo
+
       try {
         let url = 'http://localhost:3000/api/weather'
         if (typeof query === 'string') url += `?city=${query}`
         if (query?.lat) url += `?lat=${query.lat}&lon=${query.lon}`
+
         const res = await fetch(url)
         this.weather = await res.json()
       } catch {
@@ -157,9 +177,13 @@ export default {
         this.loadingWeather = false
       }
     },
+
     onSearchCity() {
-      if (this.cityQuery) this.loadWeather(this.cityQuery)
+      if (this.cityQuery) {
+        this.loadWeather(this.cityQuery)
+      }
     },
+
     detectLocation() {
       navigator.geolocation.getCurrentPosition(pos => {
         this.loadWeather({
@@ -168,15 +192,23 @@ export default {
         })
       })
     },
+
     async loadPopularTrails() {
       this.loadingPopular = true
       const res = await fetch('http://localhost:3000/api/trails/popular')
       this.popularTrails = await res.json()
       this.loadingPopular = false
     },
+
     formatHour(ts) {
-      return new Date(ts * 1000).getHours().toString().padStart(2, '0') + ':00'
+      return (
+        new Date(ts * 1000)
+          .getHours()
+          .toString()
+          .padStart(2, '0') + ':00'
+      )
     }
   }
 }
 </script>
+
