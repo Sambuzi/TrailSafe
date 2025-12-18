@@ -133,22 +133,8 @@ router.get('/', async (req, res) => {
   res.json(inMemory);
 });
 
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
-  if (mongoose.connection.readyState === 1) {
-    try {
-      const trail = await Trail.findById(id).lean();
-      if (!trail) return res.status(404).json({ error: 'Trail not found' });
-      return res.json(trail);
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Failed to fetch trail' });
-    }
-  }
-  const trail = inMemory.find(t => t.id == id);
-  if (!trail) return res.status(404).json({ error: 'Trail not found' });
-  res.json(trail);
-});
+// NOTE: the route for fetching a single trail by id is declared later
+// to avoid conflicts with more specific routes like '/search' or '/difficulties'.
 
 router.post('/', async (req, res) => {
   if (mongoose.connection.readyState === 1) {
@@ -299,4 +285,25 @@ router.delete('/:id', async (req, res) => {
 
 
 // Export DEFINITIVO (uno solo!)
+// single-trail route moved below to avoid accidental matching of static paths
+
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+  if (mongoose.connection.readyState === 1) {
+    try {
+      // defend against invalid ObjectId strings
+      if (!mongoose.isValidObjectId(id)) return res.status(400).json({ error: 'Invalid trail id' });
+      const trail = await Trail.findById(id).lean();
+      if (!trail) return res.status(404).json({ error: 'Trail not found' });
+      return res.json(trail);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Failed to fetch trail' });
+    }
+  }
+  const trail = inMemory.find(t => t.id == id);
+  if (!trail) return res.status(404).json({ error: 'Trail not found' });
+  res.json(trail);
+});
+
 module.exports = router;

@@ -68,8 +68,25 @@
 }
 
 .overlay-row { display:flex; gap:8px; flex-wrap:wrap }
-.overlay-btn { padding:6px 10px; border-radius:10px; border:none; background:#e8f5e9; color:#1b5e20; cursor:pointer }
-.overlay-btn.active { background:#1b5e20; color:#fff }
+.overlay-btn {
+  padding:6px 10px;
+  border-radius:10px;
+  border:none;
+  background:#e8f5e9;
+  color:#1b5e20;
+  cursor:pointer;
+  transition: background 140ms ease, color 140ms ease, transform 120ms ease;
+}
+.overlay-btn:focus {
+  outline: 2px solid rgba(11,58,36,0.12);
+  outline-offset: 2px;
+}
+.overlay-btn.active {
+  background: #0b3a24; /* dark green */
+  color: #ffffff;
+  box-shadow: 0 6px 18px rgba(11,58,36,0.18);
+  transform: translateY(-2px);
+}
 
 .overlay-select { width:100%; padding:8px 10px; border-radius:8px; border:1px solid #ccc }
 
