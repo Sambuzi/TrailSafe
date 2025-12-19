@@ -16,6 +16,7 @@ import Settings from '../pages/Settings.vue'
 const routes = [
   { path: '/', redirect: '/login' },
   { path: '/login', component: Login },
+  
   { path: '/register', component: Register },
   {
     path: '/',

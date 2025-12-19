@@ -4,6 +4,44 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+// Admin fixed-login endpoint
+router.post('/admin-login', async (req, res) => {
+  // Accept either a username or the admin email as identifier
+  const { username, email, password, identifier } = req.body || {};
+  const id = identifier || username || email;
+  const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
+  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'adminpass';
+  const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@trailsafe.local';
+
+  if (!id || !password) return res.status(400).json({ error: 'Username/email and password required' });
+
+  if ((id !== ADMIN_USERNAME && id !== ADMIN_EMAIL) || password !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Invalid admin credentials' });
+  }
+
+  try {
+    // Ensure an admin user exists in DB so profile and other endpoints work.
+    let user = await User.findOne({ email: ADMIN_EMAIL });
+    if (!user) {
+      const salt = await bcrypt.genSalt(10);
+      const hash = await bcrypt.hash(ADMIN_PASSWORD, salt);
+      user = new User({ name: 'Administrator', email: ADMIN_EMAIL, passwordHash: hash, role: 'admin' });
+      await user.save();
+    } else if (user.role !== 'admin') {
+      user.role = 'admin';
+      await user.save();
+    }
+
+    const secret = process.env.JWT_SECRET || 'change-me-in-env';
+    const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, secret, { expiresIn: '7d' });
+    res.json({ token, user: { id: user._id, email: user.email, name: user.name, role: user.role } });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 // Register
 router.post('/register', async (req, res) => {
   const { name, email, password } = req.body;
