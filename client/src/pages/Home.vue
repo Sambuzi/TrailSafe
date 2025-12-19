@@ -28,53 +28,64 @@
 
       <div v-else-if="weather" class="weather-info">
 
-        <div class="weather-main">
-          <img class="weather-icon" :src="weather.icon" />
+  <!-- METEO ATTUALE -->
+  <template v-if="!showHourly">
+    <div class="weather-main">
+      <img class="weather-icon" :src="weather.icon" />
 
-          <div class="weather-text">
-            <div class="weather-city">{{ weather.city }}</div>
-            <div class="weather-desc">{{ weather.description }}</div>
-            <div class="weather-temp">{{ Math.round(weather.temp) }}°C</div>
-          </div>
-        </div>
-
-        <div class="weather-details">
-          <div class="detail">
-            <div class="label">Percepita</div>
-            <div class="value">{{ weather.feels_like }}°C</div>
-          </div>
-          <div class="detail">
-            <div class="label">Umidità</div>
-            <div class="value">{{ weather.humidity }}%</div>
-          </div>
-          <div class="detail">
-            <div class="label">Vento</div>
-            <div class="value">{{ weather.wind_speed }} m/s</div>
-          </div>
-          <div class="detail">
-            <div class="label">Visibilità</div>
-            <div class="value">{{ weather.vis_km }} km</div>
-          </div>
-        </div>
-        <div class="weather-toggle-row">
-  <button class="btn geo-btn" @click="toggleHourly">
-    {{ showHourly ? 'Nascondi meteo giornaliero' : 'Vedi meteo per tutta la giornata' }}
-  </button>
-</div>
-
-
-       <div class="hourly-section" v-if="showHourly && weather.hourly?.length">
-  <h3>Prossime 24 ore</h3>
-  <div class="hourly-row">
-    <div class="hour-item" v-for="h in weather.hourly" :key="h.dt">
-      <div class="hour">{{ formatHour(h.dt) }}</div>
-      <img :src="h.icon" />
-      <div class="temp">{{ Math.round(h.temp) }}°</div>
-    </div>
-  </div>
-</div>
-
+      <div class="weather-text">
+        <div class="weather-city">{{ weather.city }}</div>
+        <div class="weather-desc">{{ weather.description }}</div>
+        <div class="weather-temp">{{ Math.round(weather.temp) }}°C</div>
       </div>
+    </div>
+
+    <div class="weather-details">
+      <div class="detail">
+        <div class="label">Percepita</div>
+        <div class="value">{{ weather.feels_like }}°C</div>
+      </div>
+      <div class="detail">
+        <div class="label">Umidità</div>
+        <div class="value">{{ weather.humidity }}%</div>
+      </div>
+      <div class="detail">
+        <div class="label">Vento</div>
+        <div class="value">{{ weather.wind_speed }} m/s</div>
+      </div>
+      <div class="detail">
+        <div class="label">Visibilità</div>
+        <div class="value">{{ weather.vis_km }} km</div>
+      </div>
+    </div>
+  </template>
+
+  <!-- METEO GIORNALIERO -->
+  <template v-else>
+    <div class="hourly-section" v-if="weather.hourly?.length">
+      <h3>Prossime 24 ore</h3>
+
+      <div class="hourly-row">
+        <div class="hour-item" v-for="h in weather.hourly" :key="h.dt">
+          <div class="hour">{{ formatHour(h.dt) }}</div>
+          <img :src="h.icon" />
+          <div class="temp">{{ Math.round(h.temp) }}°</div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- TOGGLE -->
+  <div class="weather-toggle-row">
+    <button class="btn geo-btn" @click="toggleHourly">
+      {{ showHourly
+        ? 'Torna al meteo attuale'
+        : 'Vedi meteo per tutta la giornata' }}
+    </button>
+  </div>
+
+</div>
+
 
       <div v-else-if="weatherError" class="weather-info error">
         {{ weatherError }}
@@ -143,7 +154,7 @@ export default {
       loadingWeather: false,
       weatherError: null,
 
-      showHourly: false, // 👈 toggle meteo giornaliero
+      showHourly: false, 
 
       popularTrails: [],
       loadingPopular: false
