@@ -44,9 +44,16 @@
    METEO
    ========================= */
 .weather-card {
-  max-height: 360px;          /* compatta */
-  overflow-y: auto;           /* scroll SOLO qui */
-  overflow-x: hidden;
+  max-height: 420px;          /* leggermente più alta */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.weather-scroll {
+  overflow-y: auto;
+  padding-right: 12px;
+  max-height: 420px;
 }
 
 .weather-main {
@@ -227,17 +234,54 @@
 
 /* singolo percorso */
 .trail-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
   padding: 12px;
   margin-bottom: 10px;
   border-radius: 12px;
-  background: var(--md-surface-container);
-  transition:  0.15s ease, box-shadow 0.15s ease;
+  background: linear-gradient(180deg, #ffffff, #f7f9f7);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
 .trail-item:hover {
-  background: #eeeeee;
-  box-shadow: var(--md-elevation-1);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(27,94,32,0.12);
 }
+
+.trail-left .thumb {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, rgba(27,94,32,0.06), rgba(27,94,32,0.04));
+  border-radius: 10px;
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+}
+
+.trail-body { flex: 1; }
+.trail-name { font-weight:700; font-size:1rem; margin-bottom:4px; }
+.trail-meta { display:flex; gap:8px; align-items:center; margin-bottom:6px; }
+.badge.difficulty { background: rgba(27,94,32,0.08); color: var(--md-primary); padding:4px 8px; border-radius:999px; font-weight:600; font-size:0.85rem; }
+.chip { background: rgba(0,0,0,0.04); padding:4px 8px; border-radius:8px; font-size:0.85rem; }
+.trail-sub { color: var(--md-on-surface-variant); font-size:0.85rem; }
+
+.trail-right .mini { background: transparent; border:1px solid rgba(0,0,0,0.06); padding:6px 8px; border-radius:8px; cursor:pointer; }
+
+/* Scrollbar reuse for weather scroll */
+.weather-scroll::-webkit-scrollbar,
+.saved-trails-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.weather-scroll::-webkit-scrollbar-track,
+.saved-trails-scroll::-webkit-scrollbar-track { background: transparent; }
+.weather-scroll::-webkit-scrollbar-thumb,
+.saved-trails-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.28);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.weather-scroll:hover::-webkit-scrollbar-thumb,
+.saved-trails-scroll:hover::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.45); }
 
 
 /* =========================
