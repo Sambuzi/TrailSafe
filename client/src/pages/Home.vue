@@ -124,7 +124,7 @@
           <div class="trail-sub">Stato: {{ trail.status || 'non specificato' }}</div>
         </div>
         <div class="trail-right">
-          <button class="mini">Dettagli</button>
+          <button class="mini" @click="openTrail(trail._id)">Dettagli</button>
         </div>
       </div>
     </div>
@@ -229,6 +229,11 @@ export default {
           .toString()
           .padStart(2, '0') + ':00'
       )
+    }
+    ,
+    openTrail(id) {
+      if (!id) return;
+      this.$router.push(`/trail/${id}`);
     }
   }
 }
