@@ -12,9 +12,9 @@ export default {
   data() {
     return {
       items: [
-        { to: { path: '/admin', query: { section: 'trails' } }, icon: 'terrain', label: 'Percorsi', title: 'Percorsi' },
-        { to: { path: '/admin', query: { section: 'reports' } }, icon: 'report_problem', label: 'Segnalazioni', title: 'Segnalazioni' },
-        { to: { path: '/admin', query: { section: 'profile' } }, icon: 'admin_panel_settings', label: 'Profilo', title: 'Profilo admin' }
+        { to: '/admin', icon: 'terrain', label: 'Percorsi', title: 'Percorsi' },
+        { to: '/admin/reports', icon: 'report_problem', label: 'Segnalazioni', title: 'Segnalazioni' },
+        { to: '/admin/profile', icon: 'admin_panel_settings', label: 'Profilo', title: 'Profilo admin' }
       ],
       logoSrc: logo
     }

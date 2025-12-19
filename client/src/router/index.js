@@ -10,6 +10,8 @@ import AIExplore from '../pages/AIExplore.vue'
 import TrailDetail from '../pages/TrailDetail.vue'
 import Report from '../pages/Report.vue'
 import Admin from '../pages/Admin.vue'
+import AdminReports from '../pages/AdminReports.vue'
+import AdminProfile from '../pages/AdminProfile.vue'
 import Profile from '../pages/Profile.vue'
 import Settings from '../pages/Settings.vue'
 
@@ -29,7 +31,9 @@ const routes = [
       { path: 'explore', component: AIExplore },
       { path: 'trail/:id', component: TrailDetail, props: true },
       { path: 'report', component: Report },
-      { path: 'admin', component: Admin }
+      { path: 'admin', component: Admin },
+      { path: 'admin/reports', component: AdminReports },
+      { path: 'admin/profile', component: AdminProfile }
     ]
   }
 ]
