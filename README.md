@@ -74,6 +74,12 @@ cd client
 npm install
 npm run dev
 ```
+per l'admin
+```
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=adminpass
+ADMIN_EMAIL=admin@trailsafe.local
+```
 
 Il client Vite è configurato per proxyare `/api` a `http://localhost:3000`.
 
