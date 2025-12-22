@@ -66,7 +66,32 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
+
+  // Admin fixed credentials available in env (used by /admin-login too)
+  const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
+  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'adminpass';
+  const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@trailsafe.local';
+
   try {
+    // If the credentials match the configured admin, ensure an admin user exists and return admin token
+    if ((email === ADMIN_EMAIL || email === ADMIN_USERNAME) && password === ADMIN_PASSWORD) {
+      let user = await User.findOne({ email: ADMIN_EMAIL });
+      if (!user) {
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(ADMIN_PASSWORD, salt);
+        user = new User({ name: 'Administrator', email: ADMIN_EMAIL, passwordHash: hash, role: 'admin' });
+        await user.save();
+      } else if (user.role !== 'admin') {
+        user.role = 'admin';
+        await user.save();
+      }
+
+      const secret = process.env.JWT_SECRET || 'change-me-in-env';
+      const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, secret, { expiresIn: '7d' });
+      return res.json({ token, user: { id: user._id, email: user.email, name: user.name, role: user.role } });
+    }
+
+    // Regular user flow
     let user = await User.findOne({ email });
 
     // If user doesn't exist, create one (auto-register on login)
@@ -83,7 +108,7 @@ router.post('/login', async (req, res) => {
 
     const secret = process.env.JWT_SECRET || 'change-me-in-env';
     const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, secret, { expiresIn: '7d' });
-    res.json({ token, user: { id: user._id, email: user.email, name: user.name } });
+    res.json({ token, user: { id: user._id, email: user.email, name: user.name, role: user.role } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

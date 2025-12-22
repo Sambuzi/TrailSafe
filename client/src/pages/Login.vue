@@ -21,10 +21,7 @@
 
         <div class="actions">
           <button class="btn filled" type="submit">
-            Entra come utente
-          </button>
-          <button class="btn tonal" type="button" @click="submit('admin')">
-            Entra come Amministratore
+            Entra
           </button>
           <router-link class="btn outline" to="/register">Registrati</router-link>
         </div>
@@ -62,38 +59,24 @@
     },
 
     methods: {
-      async submit(role) {
+      async submit() {
         this.error = null;
         try {
-          let res, body;
-              if (role === 'admin') {
-                // Use the email/password fields as admin identifier/password
-                if (!this.form.email || !this.form.password) {
-                  this.error = 'Inserisci email e password per l amministratore';
-                  return;
-                }
-                res = await fetch('/api/auth/admin-login', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ identifier: this.form.email, password: this.form.password })
-                });
-                body = await res.json();
-              } else {
-            res = await fetch('/api/auth/login', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(this.form)
-            });
-            body = await res.json();
-          }
+          const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(this.form)
+          });
+          const body = await res.json();
 
           if (!res.ok) {
             this.error = body.error || 'Login fallito';
             return;
           }
 
-          // salva token+user e vai a pagina corretta
+          // salva token+user e vai a pagina corretta in base al ruolo
           try { localStorage.setItem('ts_user', JSON.stringify(body)); } catch {}
+          const role = body.user && body.user.role;
           if (role === 'admin') {
             this.$router && this.$router.push('/admin');
           } else {
