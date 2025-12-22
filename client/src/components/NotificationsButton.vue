@@ -21,7 +21,11 @@ export default {
       // mark as read, then navigate and clear badge
       try {
         const auth = this.getAuthHeader();
-        await fetch('/api/reports/mark-read', { method: 'POST', headers: { ...auth } });
+        // mark both reports and notifications read where applicable
+        await Promise.all([
+          fetch('/api/reports/mark-read', { method: 'POST', headers: { ...auth } }),
+          fetch('/api/notifications/mark-read', { method: 'POST', headers: { ...auth } })
+        ]);
       } catch (e) {
         // ignore
       }
@@ -44,13 +48,15 @@ export default {
     async loadCount() {
       try {
         const auth = this.getAuthHeader();
-        const [reportsRes, profileRes] = await Promise.all([
+        const [reportsRes, notesRes, profileRes] = await Promise.all([
           fetch('/api/reports/approved'),
+          fetch('/api/notifications', { headers: { ...auth } }),
           fetch('/api/auth/profile', { headers: { ...auth } })
         ]);
 
         if (!reportsRes.ok) return;
         const reports = await reportsRes.json();
+        const notes = notesRes && notesRes.ok ? await notesRes.json() : [];
 
         let lastSeen = 0;
         if (profileRes && profileRes.ok) {
@@ -58,7 +64,10 @@ export default {
           lastSeen = body.user && body.user.lastSeenNotifications ? new Date(body.user.lastSeenNotifications).getTime() : 0;
         }
 
-        this.count = Array.isArray(reports) ? reports.filter(r => new Date(r.createdAt).getTime() > lastSeen).length : 0;
+        const reportsCount = Array.isArray(reports) ? reports.filter(r => new Date(r.createdAt).getTime() > lastSeen).length : 0;
+        const notesCount = Array.isArray(notes) ? notes.filter(n => !n.read).length : 0;
+
+        this.count = reportsCount + notesCount;
       } catch (e) {
         // ignore
       }
@@ -67,12 +76,14 @@ export default {
     async pollForNew() {
       try {
         const auth = this.getAuthHeader();
-        const [reportsRes, profileRes] = await Promise.all([
+        const [reportsRes, notesRes, profileRes] = await Promise.all([
           fetch('/api/reports/approved'),
+          fetch('/api/notifications', { headers: { ...auth } }),
           fetch('/api/auth/profile', { headers: { ...auth } })
         ]);
         if (!reportsRes.ok) return;
         const reports = await reportsRes.json();
+        const notes = notesRes && notesRes.ok ? await notesRes.json() : [];
 
         let lastSeen = 0;
         if (profileRes && profileRes.ok) {
@@ -81,8 +92,15 @@ export default {
         }
 
         const newReports = Array.isArray(reports) ? reports.filter(r => new Date(r.createdAt).getTime() > lastSeen) : [];
-        if (newReports.length) {
-          // show a toast for the newest
+        const unreadNotes = Array.isArray(notes) ? notes.filter(n => !n.read) : [];
+
+        // show toasts for new personal notifications (if any)
+        if (unreadNotes.length) {
+          const newest = unreadNotes[0];
+          const title = newest.trail ? (newest.trail.name || 'Avviso meteo') : 'Avviso meteo';
+          const message = newest.message && newest.message.length > 140 ? newest.message.slice(0,137) + '...' : newest.message;
+          window.dispatchEvent(new CustomEvent('app:show-toast', { detail: { title, message } }));
+        } else if (newReports.length) {
           const newest = newReports[0];
           const title = newest.trail ? newest.trail.name : 'Nuova segnalazione';
           const message = newest.text.length > 140 ? newest.text.slice(0,137) + '...' : newest.text;
@@ -90,7 +108,7 @@ export default {
         }
 
         // update internal badge count
-        const count = Array.isArray(reports) ? reports.filter(r => new Date(r.createdAt).getTime() > lastSeen).length : 0;
+        const count = (Array.isArray(reports) ? reports.filter(r => new Date(r.createdAt).getTime() > lastSeen).length : 0) + (Array.isArray(notes) ? notes.filter(n => !n.read).length : 0);
         this.count = count;
       } catch (e) {
         // ignore polling errors

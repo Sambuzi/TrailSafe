@@ -173,7 +173,7 @@
 
         <div class="form-group">
           <label>Seleziona percorso (opzionale)</label>
-          <select v-model="reportForm.trail">
+          <select v-model="reportForm.trail" @change="onTrailSelect">
             <option value="">-- Nessuno --</option>
             <option v-for="t in popularTrails" :key="t._id" :value="t._id">{{ t.name }}</option>
           </select>
@@ -194,13 +194,19 @@
           <label>Posizione</label>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
             <button type="button" class="btn" @click="fillLocation">Usa la mia posizione</button>
+            <button type="button" class="btn" v-if="selectedTrailData" @click="showMapPicker = !showMapPicker">Scegli sulla mappa</button>
             <div style="display:flex;gap:8px;align-items:center;">
               <input v-model.number="reportForm.location.lat" placeholder="Latitudine" style="width:140px;" />
               <input v-model.number="reportForm.location.lng" placeholder="Longitudine" style="width:140px;" />
             </div>
             <div class="muted">{{ (reportForm.location && reportForm.location.lat !== null && reportForm.location.lng !== null) ? (reportForm.location.lat.toFixed(4) + ', ' + reportForm.location.lng.toFixed(4)) : 'Nessuna posizione' }}</div>
           </div>
-          <small class="muted">Puoi inserire manualmente le coordinate oppure usare il pulsante per raccogliere la posizione corrente.</small>
+          <small class="muted">Prima seleziona un percorso per poterlo visualizzare sulla mappa; poi puoi cliccare sul percorso o usare la tua posizione.</small>
+        </div>
+
+        <div v-if="showMapPicker && selectedTrailData" class="form-group">
+          <label>Scegli posizione sulla mappa</label>
+          <ReportMapPicker :trail="selectedTrailData" :initialLocation="reportForm.location" @location-selected="onMapLocationSelected" />
         </div>
 
         <div class="form-actions" style="margin-top:12px; display:flex; gap:8px; justify-content:flex-end;">
@@ -214,9 +220,11 @@
 
 <script>
 import '../css/Home.css'
+import ReportMapPicker from '../components/ReportMapPicker.vue'
 
 export default {
   name: 'Home',
+  components: { ReportMapPicker },
 
   data() {
     return {
@@ -231,6 +239,8 @@ export default {
       loadingPopular: false
       ,
       showReportModal: false,
+      showMapPicker: false,
+      selectedTrailData: null,
       reportForm: {
         placeName: '',
         trail: '',
@@ -346,6 +356,29 @@ export default {
       }, () => alert('Impossibile ottenere posizione'));
     },
 
+    async onTrailSelect() {
+      const id = this.reportForm.trail
+      if (!id) {
+        this.selectedTrailData = null
+        this.showMapPicker = false
+        return
+      }
+      try {
+        const res = await fetch(`/api/trails/${id}`)
+        if (!res.ok) { this.selectedTrailData = null; this.showMapPicker = false; return }
+        this.selectedTrailData = await res.json()
+        // show map automatically when trail loaded
+        this.showMapPicker = true
+      } catch (e) {
+        this.selectedTrailData = null
+        this.showMapPicker = false
+      }
+    },
+
+    onMapLocationSelected(loc) {
+      this.reportForm.location = { lat: loc.lat, lng: loc.lng }
+    },
+
     onFileChange(e) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
@@ -386,11 +419,15 @@ export default {
 
     closeReportModal() {
       this.showReportModal = false;
+      this.showMapPicker = false;
+      this.selectedTrailData = null;
       this.reportForm = { placeName: '', trail: '', text: '', severity: 'low', location: { lat: null, lng: null }, imageBase64: null, imagePreview: null };
     },
 
     openReportModal() {
       this.showReportModal = true;
+      this.showMapPicker = false;
+      this.selectedTrailData = null;
     }
   }
 }
@@ -440,8 +477,14 @@ export default {
 }
 
 .form-actions { display:flex; gap:8px; justify-content:flex-end; }
-.btn-primary { background: linear-gradient(180deg,var(--md-primary,#6750A4),#533e85); color:white; border:none; padding:10px 14px; border-radius:10px; }
-.btn-secondary { background: transparent; border: 1px solid rgba(16,24,40,0.08); padding:8px 12px; border-radius:10px; }
+
+/* Material 3 inspired green buttons */
+.btn { background: linear-gradient(180deg,#34a853,#0f9d58); color: #ffffff; border: none; padding:8px 12px; border-radius:12px; cursor:pointer; box-shadow: 0 6px 10px rgba(16,24,40,0.08); }
+.btn:hover { filter: brightness(0.96); }
+.btn:active { transform: translateY(1px); }
+
+.btn-primary { background: linear-gradient(180deg,#34a853,#0f9d58); color:white; border:none; padding:10px 14px; border-radius:12px; box-shadow: 0 10px 20px rgba(15,157,88,0.14); }
+.btn-secondary { background: transparent; border: 1px solid rgba(16,24,40,0.08); padding:8px 12px; border-radius:12px; }
 
 .muted { color: #6b7280; font-size:0.9rem }
 

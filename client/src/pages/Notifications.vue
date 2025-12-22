@@ -9,11 +9,10 @@
       <ul v-if="items.length">
         <li v-for="it in items" :key="it._id" class="notice">
           <div class="notice-head">
-            <strong>{{ it.trail ? it.trail.name : 'Aggiornamento' }}</strong>
+            <strong>{{ it.title }}</strong>
             <small class="muted">{{ new Date(it.createdAt).toLocaleString() }}</small>
           </div>
-          <div class="notice-body">{{ it.text }}</div>
-          <div v-if="it.imageUrl" class="notice-image"><img :src="it.imageUrl" alt="img" /></div>
+          <div class="notice-body">{{ it.message || it.text }}</div>
         </li>
       </ul>
       <div v-else class="muted">Nessuna notifica</div>
@@ -30,11 +29,29 @@ export default {
     async load() {
       this.loading = true; this.error = null;
       try {
-        const res = await fetch('/api/reports/approved');
-        if (!res.ok) { this.error = 'Errore nel caricamento'; return }
-        this.items = await res.json();
+        const [notesRes, reportsRes] = await Promise.all([
+          fetch('/api/notifications', { headers: this.getAuthHeader() }),
+          fetch('/api/reports/approved')
+        ]);
+        const notes = notesRes && notesRes.ok ? await notesRes.json() : [];
+        const reports = reportsRes && reportsRes.ok ? await reportsRes.json() : [];
+
+        // normalize items: notifications first
+        const normNotes = notes.map(n => ({ _id: n._id, title: n.trail ? n.trail.name : 'Avviso', message: n.message, createdAt: n.createdAt, read: n.read }));
+        const normReports = reports.map(r => ({ _id: r._id, title: r.trail ? r.trail.name : 'Segnalazione', text: r.text, createdAt: r.createdAt }));
+        this.items = [...normNotes, ...normReports];
       } catch (e) { this.error = 'Server non raggiungibile' }
       finally { this.loading = false }
+    },
+
+    getAuthHeader() {
+      try {
+        const raw = localStorage.getItem('ts_user');
+        if (!raw) return {};
+        const parsed = JSON.parse(raw);
+        if (!parsed || !parsed.token) return {};
+        return { Authorization: `Bearer ${parsed.token}` };
+      } catch (e) { return {} }
     }
   }
 }

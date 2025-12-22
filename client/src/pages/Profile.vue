@@ -84,9 +84,14 @@
             Nessuna escursione programmata.
           </div>
           <div v-else class="trails-list">
-            <div v-for="plan in plannedExcursions" :key="plan._id" class="trail-item">
+            <div v-for="plan in plannedExcursions" :key="plan._id" :class="['trail-item', { 'plan-today': isToday(plan.date) }]">
               <h3>{{ plan.trail.name }}</h3>
               <p>Data: {{ new Date(plan.date).toLocaleDateString() }}</p>
+              <div v-if="plan.forecast" class="plan-forecast">
+                <img :src="plan.forecast.icon" alt="meteo" class="forecast-icon" />
+                <span class="forecast-temp">{{ Math.round(plan.forecast.temp) }}°C</span>
+                <span class="forecast-desc">{{ plan.forecast.description }}</span>
+              </div>
             </div>
           </div>
         </section>
@@ -151,12 +156,72 @@ export default {
         const data2 = await res2.json();
         if (res2.ok) {
           this.plannedExcursions = data2.plannedExcursions || [];
+          // fetch per-plan forecasts for the planned dates
+          this.fetchPlansForecasts();
         }
       } catch (err) {
         console.error('Failed to fetch profile', err);
       }
-    }
-    ,
+    },
+    async fetchPlansForecasts() {
+      if (!this.plannedExcursions || !this.plannedExcursions.length) return;
+      for (const plan of this.plannedExcursions) {
+        try {
+          const trail = plan.trail || {};
+          const coord = this.getRepresentativeCoord(trail);
+          if (!coord) {
+            plan.forecast = null;
+            continue;
+          }
+          const dateStr = new Date(plan.date).toISOString().slice(0,10);
+          const res = await fetch(`/api/weather?lat=${coord.lat}&lon=${coord.lon}&date=${encodeURIComponent(dateStr)}`);
+          if (!res.ok) { plan.forecast = null; continue; }
+          const f = await res.json();
+          plan.forecast = f;
+        } catch (e) {
+          console.warn('Failed to fetch forecast for plan', e);
+          plan.forecast = null;
+        }
+      }
+      // trigger reactivity
+      this.plannedExcursions = [...this.plannedExcursions];
+    },
+
+    isToday(d) {
+      try {
+        const dt = new Date(d);
+        const today = new Date();
+        dt.setHours(0,0,0,0);
+        today.setHours(0,0,0,0);
+        return dt.getTime() === today.getTime();
+      } catch (e) { return false }
+    },
+
+    getRepresentativeCoord(trail) {
+      // Try GeoJSON geometry (LineString: coordinates = [[lon,lat], ...])
+      try {
+        const g = trail.geometry;
+        if (g && Array.isArray(g.coordinates) && g.coordinates.length > 0) {
+          const coords = g.coordinates;
+          // handle MultiLineString
+          let point = null;
+          if (Array.isArray(coords[0][0])) {
+            const firstLine = coords[0];
+            point = firstLine[Math.floor(firstLine.length/2)];
+          } else {
+            point = coords[Math.floor(coords.length/2)];
+          }
+          if (point && point.length >= 2) return { lat: point[1], lon: point[0] };
+        }
+        // fallback fields
+        if (trail.lat && trail.lon) return { lat: trail.lat, lon: trail.lon };
+        if (trail.center && Array.isArray(trail.center)) return { lat: trail.center[1], lon: trail.center[0] };
+      } catch (e) {
+        return null;
+      }
+      return null;
+    },
+    
     planExcursion(trailId) {
       // open modal and default date to today
       this.planTrailId = trailId;
@@ -195,3 +260,11 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.plan-today { background: linear-gradient(90deg, rgba(255,249,196,0.95), rgba(255,243,224,0.9)); border-left: 4px solid #f59e0b; padding: 12px; border-radius: 8px }
+.plan-forecast { display:flex; gap:8px; align-items:center; margin-top:8px }
+.forecast-icon { width:28px; height:28px }
+.forecast-temp { font-weight:600; margin-right:6px }
+.forecast-desc { color: #374151 }
+</style>
