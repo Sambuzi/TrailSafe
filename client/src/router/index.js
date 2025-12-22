@@ -10,6 +10,7 @@ import AIExplore from '../pages/AIExplore.vue'
 import TrailDetail from '../pages/TrailDetail.vue'
 import Report from '../pages/Report.vue'
 import Admin from '../pages/Admin.vue'
+import Notifications from '../pages/Notifications.vue'
 import AdminReports from '../pages/AdminReports.vue'
 import AdminProfile from '../pages/AdminProfile.vue'
 import Profile from '../pages/Profile.vue'
@@ -26,6 +27,7 @@ const routes = [
     children: [
       { path: 'home', component: Home },
       { path: 'profile', component: Profile },
+      { path: 'notifications', component: Notifications },
       { path: 'settings', component: Settings },
       { path: 'map', component: Map},
       { path: 'explore', component: AIExplore },

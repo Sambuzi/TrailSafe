@@ -120,7 +120,7 @@ router.get('/profile', require('../middleware/auth'), async (req, res) => {
   try {
     const user = await User.findById(req.user.id).populate('savedTrails');
     if (!user) return res.status(404).json({ error: 'User not found' });
-    res.json({ user: { id: user._id, email: user.email, name: user.name, savedTrails: user.savedTrails } });
+    res.json({ user: { id: user._id, email: user.email, name: user.name, savedTrails: user.savedTrails, lastSeenNotifications: user.lastSeenNotifications } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

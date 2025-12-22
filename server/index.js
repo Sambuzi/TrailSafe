@@ -62,6 +62,7 @@ const startServer = async () => {
   // Routes
   app.use('/api/trails', require('./routes/trails'));
   app.use('/api/auth', require('./routes/auth'));
+  app.use('/api/reports', require('./routes/reports'));
   app.use('/api/weather', require('./routes/weather'));
   app.use('/api/ai', require('./routes/ai'));
 

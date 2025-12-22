@@ -7,6 +7,7 @@ const UserSchema = new mongoose.Schema({
   role: { type: String, enum: ['user','admin'], default: 'user' },
   level: { type: String, enum: ['principiante', 'intermedio', 'avanzato'], default: 'principiante' },
   notificationsEnabled: { type: Boolean, default: true },
+  lastSeenNotifications: { type: Date },
   savedTrails: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Trail' }],
   plannedExcursions: [{
     trail: { type: mongoose.Schema.Types.ObjectId, ref: 'Trail' },

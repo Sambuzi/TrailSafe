@@ -5,6 +5,7 @@
     <div class="main-area">
       <header class="topbar">
         <div class="topbar-right">
+          <NotificationsButton />
           <SettingsButton />
         </div>
       </header>
@@ -12,6 +13,7 @@
       <main class="content">
         <router-view />
       </main>
+      <NotificationToast />
     </div>
   </div>
 </template>
@@ -20,11 +22,13 @@
 import Sidebar from '../components/Sidebar.vue'
 import AdminSidebar from '../components/AdminSidebar.vue'
 import SettingsButton from '../components/SettingsButton.vue'
+import NotificationsButton from '../components/NotificationsButton.vue'
 import '../css/MainLayout.css'
+import NotificationToast from '../components/NotificationToast.vue'
 
 export default {
   name: 'MainLayout',
-  components: { Sidebar, AdminSidebar, SettingsButton },
+  components: { Sidebar, AdminSidebar, SettingsButton, NotificationsButton, NotificationToast },
   data() {
     return { isAdmin: false };
   },
