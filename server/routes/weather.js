@@ -4,15 +4,15 @@ const { getWeather } = require('../services/weatherService');
 
 router.get('/', async (req, res) => {
   try {
-    const { city, lat, lon } = req.query;
+    const { city, lat, lon, date } = req.query;
 
     let weather;
     if (city) {
-      weather = await getWeather(city);
+      weather = await getWeather(city, undefined, date);
     } else if (lat && lon) {
-      weather = await getWeather(Number(lat), Number(lon));
+      weather = await getWeather(Number(lat), Number(lon), date);
     } else {
-      weather = await getWeather(46.35, 11.2); // default
+      weather = await getWeather(46.35, 11.2, date); // default
     }
 
     res.json(weather);
