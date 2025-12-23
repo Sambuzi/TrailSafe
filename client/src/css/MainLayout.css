@@ -4,7 +4,7 @@ html, body, #app {
   width: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* disable both horizontal and vertical page scrolling */
+  overflow: auto; /* allow page scrolling when content overflows */
 }
 
 .layout {
@@ -16,9 +16,8 @@ html, body, #app {
   display: flex;
   min-height: 100vh;
   background: linear-gradient(135deg, #1f4037, #6bbf9c);
-  overflow: hidden; /* keep viewport fixed and avoid white gaps */
+  overflow: visible; /* allow scrollable children */
 }
-
 /* CONTENUTO PRINCIPALE */
 .main-area {
   position: fixed;
@@ -29,7 +28,6 @@ html, body, #app {
   display: flex;
   flex-direction: column;
 }
-
 /* CONTENT: fixed area to the right of the sidebar; scrolls internally */
 .content {
   position: absolute;
@@ -42,18 +40,38 @@ html, body, #app {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  /* Prevent any scrollbar in the main content area; components handle internal scrolling */
-  overflow: hidden;
+  /* Allow vertical scrolling inside the main content area; components still manage internal scroll */
+  overflow: auto;
   overflow-x: hidden; /* prevent horizontal scrolling */
   min-height: 0; /* allow children to shrink inside this flex container */
 }
 
-/* hide any visible scrollbar across browsers as a safeguard */
-.content {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE 10+ */
+/* Material 3 inspired thin scrollbars for scrollable areas */
+.content, .table-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(16,24,32,0.12) transparent;
 }
-.content::-webkit-scrollbar { display: none; }
+.content::-webkit-scrollbar, .table-container::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.content::-webkit-scrollbar-track, .table-container::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 999px;
+}
+.content::-webkit-scrollbar-thumb, .table-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(16,24,32,0.12), rgba(16,24,32,0.08));
+  border-radius: 999px;
+  min-height: 28px;
+  box-shadow: inset 0 0 0 3px rgba(255,255,255,0.02);
+  transition: background 160ms ease, transform 160ms ease;
+}
+.content::-webkit-scrollbar-thumb:hover, .table-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(16,24,32,0.18), rgba(16,24,32,0.12));
+}
+.content::-webkit-scrollbar-thumb:active, .table-container::-webkit-scrollbar-thumb:active {
+  transform: scale(0.98);
+}
 
 /* Desktop */
 @media (min-width: 900px) {
@@ -63,5 +81,3 @@ html, body, #app {
 /* TOPBAR */
 .topbar { display: flex; justify-content: flex-end; align-items: center; padding: 12px 20px; color: #fff; height: 64px; }
 .topbar-right { margin-left: auto }
-
-/* ensure content stays below topbar (handled by absolute positioning) */
