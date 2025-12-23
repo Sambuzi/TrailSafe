@@ -32,14 +32,20 @@
   padding: 20px;
   max-width: 1400px;
   margin: 0 auto;
-  /* Allow page scrolling so all cards are reachable */
-  overflow: auto;
-  max-height: 100vh;
+  /* Let the page layout size naturally; internal cards will handle scrolling */
+  overflow: visible;
+  max-height: none;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .admin-content {
-  /* keep content flow but avoid page-level scroll */
-  overflow: visible;
+  /* keep header/stats fixed and let table fill remaining space */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+  min-height: 0;
 }
 
 .admin-header {
@@ -141,28 +147,43 @@
   background: var(--md-surface);
   border-radius: var(--md-radius-lg);
   box-shadow: var(--md-elevation-2);
-  /* internal scrolling for the table */
+  /* let the table card expand to fill the remaining content area and scroll internally */
+  flex: 1 1 auto;
+  min-height: 0; /* required for correct flexbox scrolling */
   overflow: auto;
   border: 1px solid var(--md-outline);
-  max-height: calc(100vh - 240px); /* limit height so scrollbar appears inside the card */
+  /* cap the card so it fits within the visible page without forcing page scrollbar */
+  /* tightened to leave more room for header/topbar and avoid main scrollbar */
+  max-height: calc(100vh - 260px);
   position: relative;
   -webkit-overflow-scrolling: touch;
 }
 
-/* Style scrollbar only for the table card */
+/* Material3-like scrollbar for .table-container */
+.table-container {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: rgba(16,24,32,0.12) transparent;
+}
 .table-container::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
 }
 .table-container::-webkit-scrollbar-track {
   background: transparent;
+  border-radius: 12px;
 }
 .table-container::-webkit-scrollbar-thumb {
-  background: rgba(16,24,32,0.12);
-  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(16,24,32,0.12), rgba(16,24,32,0.08));
+  border-radius: 10px;
+  min-height: 28px;
+  box-shadow: inset 0 0 0 3px rgba(255,255,255,0.02);
+  transition: background 160ms ease, transform 160ms ease;
 }
 .table-container::-webkit-scrollbar-thumb:hover {
-  background: rgba(16,24,32,0.18);
+  background: linear-gradient(180deg, rgba(16,24,32,0.18), rgba(16,24,32,0.12));
+}
+.table-container::-webkit-scrollbar-thumb:active {
+  transform: scale(0.98);
 }
 
 .admin-table {
@@ -441,7 +462,8 @@
   }
 
   .table-container {
-    max-height: 60vh;
+    /* mobile: leave extra space for stacked header + stats */
+    max-height: calc(100vh - 200px);
   }
 
   .modal-content {
@@ -456,7 +478,7 @@
   .admin-page {
     padding: 16px;
     overflow-x: auto;
-    overflow-y: auto;
+    overflow-y: visible;
   }
 }
 

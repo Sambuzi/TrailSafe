@@ -42,9 +42,18 @@ html, body, #app {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  overflow-y: auto; /* enable vertical scrolling so cards are not clipped */
+  /* Prevent any scrollbar in the main content area; components handle internal scrolling */
+  overflow: hidden;
   overflow-x: hidden; /* prevent horizontal scrolling */
+  min-height: 0; /* allow children to shrink inside this flex container */
 }
+
+/* hide any visible scrollbar across browsers as a safeguard */
+.content {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+.content::-webkit-scrollbar { display: none; }
 
 /* Desktop */
 @media (min-width: 900px) {
