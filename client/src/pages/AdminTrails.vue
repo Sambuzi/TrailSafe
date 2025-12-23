@@ -122,7 +122,7 @@
             </select>
           </div>
           <div class="form-actions">
-            <button type="button" class="btn-secondary" @click="closeModal">Annulla</button>
+            <button type="button" class="btn-secondary trail-cancel-btn" @click="closeModal">Annulla</button>
             <button type="submit" class="btn-primary">Salva</button>
           </div>
         </form>
@@ -166,7 +166,7 @@
       </div>
 
       <div class="form-actions">
-        <button class="btn-secondary" @click="resetFilters">
+        <button class="btn-secondary reset-btn--danger" @click="resetFilters">
           Reset
         </button>
         <button class="btn-primary" @click="closeFilterModal">

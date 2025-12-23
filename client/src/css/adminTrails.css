@@ -266,6 +266,28 @@
   background: var(--md-error);
   color: var(--md-on-primary);
 }
+.reset-btn--danger,
+.trail-cancel-btn {
+  background: linear-gradient(90deg, rgba(211,47,47,1), rgba(183,28,28,0.95));
+  color: var(--md-on-primary);
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(183,28,28,0.12);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.reset-btn--danger:hover,
+.trail-cancel-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(183,28,28,0.16);
+}
+.reset-btn--danger:focus,
+.trail-cancel-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(211,47,47,0.12);
+}
 .btn-primary {
   background: linear-gradient(90deg, var(--md-primary), color-mix(in srgb, var(--md-primary) 80%, black 10%));
   color: var(--md-on-primary);
