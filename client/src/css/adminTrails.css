@@ -5,26 +5,21 @@
   width: 8px;
   height: 8px;
 }
-
 ::-webkit-scrollbar-track {
   background: var(--md-surface-container);
   border-radius: var(--md-radius-sm);
 }
-
 ::-webkit-scrollbar-thumb {
   background: var(--md-outline);
   border-radius: var(--md-radius-sm);
   transition: background 0.2s ease;
 }
-
 ::-webkit-scrollbar-thumb:hover {
   background: var(--md-on-surface-variant);
 }
-
 ::-webkit-scrollbar-corner {
   background: var(--md-surface-container);
 }
-
 /* =========================
    PAGE LAYOUT
    ========================= */
@@ -32,22 +27,18 @@
   padding: 20px;
   max-width: 1400px;
   margin: 0 auto;
-  /* Let the page layout size naturally; internal cards will handle scrolling */
   overflow: visible;
   max-height: none;
   height: 100%;
   box-sizing: border-box;
 }
-
 .admin-content {
-  /* keep header/stats fixed and let table fill remaining space */
   display: flex;
   flex-direction: column;
   gap: 16px;
   height: 100%;
   min-height: 0;
 }
-
 .admin-header {
   display: flex;
   justify-content: space-between;
@@ -56,14 +47,12 @@
   padding-bottom: 16px;
   border-bottom: 1px solid var(--md-outline);
 }
-
 .admin-header h1 {
   font-size: 2rem;
   font-weight: 600;
   color: var(--md-on-surface);
   margin: 0;
 }
-
 .add-trail-btn {
   display: inline-flex;
   align-items: center;
@@ -78,12 +67,10 @@
   box-shadow: 0 6px 18px rgba(27,94,32,0.12);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-
 .add-trail-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 26px rgba(27,94,32,0.16);
 }
-
 .md-topbar {
   background: #ffffff; /* bianco richiesto */
   border-radius: 12px;
@@ -92,7 +79,6 @@
   box-shadow: 0 6px 20px rgba(16,24,32,0.06);
   border: 1px solid rgba(0,0,0,0.04);
 }
-
 .topbar-inner { display:flex; align-items:center; justify-content:space-between; gap:16px; }
 .topbar-left h1 { margin:0; font-size:1.5rem; color:var(--md-on-surface); }
 .subtitle { margin:4px 0 0 0; color:var(--md-on-surface-variant); font-size:0.9rem }
@@ -101,11 +87,7 @@
 .search-input input { border:none; outline:none; background:transparent; min-width:160px }
 .btn-secondary.icon { padding:8px 10px; border-radius:10px }
 
-.stats-cards { display:flex; gap:12px; margin-bottom:20px }
-.stat-card.elevated { display:flex; align-items:center; gap:12px; padding:14px; background:var(--md-surface); border-radius:12px; box-shadow: 0 6px 18px rgba(6, 24, 9, 0.04); border:1px solid rgba(27,94,32,0.06); min-width:200px }
-.stat-icon { font-size:24px }
-.stat-body h3 { margin:0; font-size:1.6rem; color:var(--md-on-surface) }
-.stat-body p { margin:0; color:var(--md-on-surface-variant); font-weight:600 }
+/* stats-cards variants consolidated below */
 
 /* =========================
    STATS CARDS
@@ -116,7 +98,6 @@
   gap: 12px;
   margin-bottom: 20px;
 }
-
 .stat-card {
   background: var(--md-surface);
   padding: 12px;
@@ -125,21 +106,18 @@
   text-align: center;
   border: 1px solid var(--md-outline);
 }
-
 .stat-card h3 {
   font-size: 1.6rem;
   font-weight: 700;
   color: var(--md-primary);
   margin: 0 0 6px 0;
 }
-
 .stat-card p {
   font-size: 0.85rem;
   color: var(--md-on-surface-variant);
   margin: 0;
   font-weight: 600;
 }
-
 /* =========================
    TABLE
    ========================= */
@@ -147,21 +125,16 @@
   background: var(--md-surface);
   border-radius: var(--md-radius-lg);
   box-shadow: var(--md-elevation-2);
-  /* let the table card expand to fill the remaining content area and scroll internally */
   flex: 1 1 auto;
-  min-height: 0; /* required for correct flexbox scrolling */
+  min-height: 0;
   overflow: auto;
   border: 1px solid var(--md-outline);
-  /* cap the card so it fits within the visible page without forcing page scrollbar */
-  /* tightened to leave more room for header/topbar and avoid main scrollbar */
-  max-height: calc(100vh - 260px);
+  max-height: calc(80vh - 260px);
   position: relative;
   -webkit-overflow-scrolling: touch;
 }
-
-/* Material3-like scrollbar for .table-container */
 .table-container {
-  scrollbar-width: thin; /* Firefox */
+  scrollbar-width: thin;
   scrollbar-color: rgba(16,24,32,0.12) transparent;
 }
 .table-container::-webkit-scrollbar {
@@ -185,33 +158,27 @@
 .table-container::-webkit-scrollbar-thumb:active {
   transform: scale(0.98);
 }
-
 .admin-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
   min-width: 800px;
 }
-
 .admin-table thead {
   background: var(--md-surface-container);
 }
-
 .admin-table th {
   padding: 16px 12px;
   text-align: left;
   font-weight: 600;
   color: var(--md-on-surface);
   border-bottom: 1px solid var(--md-outline);
-  /* make header cells sticky when scrolling inside the .table-container */
   position: sticky;
   top: 0;
   z-index: 5;
   background: var(--md-surface-container);
   backdrop-filter: blur(4px);
 }
-
-/* add a subtle separator shadow so header stands out over rows */
 .admin-table thead th::after {
   content: '';
   position: absolute;
@@ -221,21 +188,17 @@
   height: 1px;
   background: linear-gradient(90deg, rgba(0,0,0,0.04), rgba(0,0,0,0));
 }
-
 .admin-table td {
   padding: 12px;
   border-bottom: 1px solid var(--md-outline);
   color: var(--md-on-surface);
 }
-
 .admin-table tbody tr:hover {
   background: rgba(27,94,32,.04);
 }
-
 .admin-table tbody tr.status-closed {
   opacity: 0.7;
 }
-
 /* =========================
    BADGES
    ========================= */
@@ -246,37 +209,30 @@
   font-weight: 500;
   text-transform: capitalize;
 }
-
 .difficulty-badge.easy {
   background: rgba(76, 175, 80, 0.1);
   color: #4caf50;
 }
-
 .difficulty-badge.medium {
   background: rgba(255, 152, 0, 0.1);
   color: #ff9800;
 }
-
 .difficulty-badge.hard {
   background: rgba(244, 67, 54, 0.1);
   color: #f44336;
 }
-
 .status-badge.open {
   background: rgba(76, 175, 80, 0.1);
   color: #4caf50;
 }
-
 .status-badge.closed {
   background: rgba(244, 67, 54, 0.1);
   color: #f44336;
 }
-
 .status-badge.partial {
   background: rgba(255, 152, 0, 0.1);
   color: #ff9800;
 }
-
 /* =========================
    ACTIONS
    ========================= */
@@ -284,7 +240,6 @@
   display: flex;
   gap: 8px;
 }
-
 .btn-secondary, .btn-danger {
   padding: 6px 12px;
   border-radius: var(--md-radius-sm);
@@ -294,29 +249,23 @@
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
 .btn-secondary {
   background: var(--md-surface-container);
   color: var(--md-on-surface);
   border: 1px solid var(--md-outline);
 }
-
 .btn-secondary:hover {
   background: var(--md-on-surface);
   color: var(--md-surface);
 }
-
 .btn-danger {
   background: rgba(211, 47, 47, 0.1);
   color: var(--md-error);
 }
-
 .btn-danger:hover {
   background: var(--md-error);
   color: var(--md-on-primary);
 }
-
-/* Primary button (Material3 look) */
 .btn-primary {
   background: linear-gradient(90deg, var(--md-primary), color-mix(in srgb, var(--md-primary) 80%, black 10%));
   color: var(--md-on-primary);
@@ -327,10 +276,7 @@
   cursor: pointer;
   box-shadow: 0 6px 18px rgba(27,94,32,0.08);
 }
-
 .btn-primary:hover { transform: translateY(-2px); }
-
-/* Status badges for reports */
 .status-badge {
   padding: 6px 10px;
   border-radius: 999px;
@@ -341,12 +287,10 @@
 .status-badge.pending { background: rgba(245,158,11,0.08); color: #f59e0b; }
 .status-badge.approved { background: rgba(16,185,129,0.08); color: #10b981; }
 .status-badge.rejected { background: rgba(239,68,68,0.08); color: #ef4444; }
-
 .edit-btn, .delete-btn {
   padding: 4px 8px;
   font-size: 0.75rem;
 }
-
 /* =========================
    MODAL
    ========================= */
@@ -362,7 +306,6 @@
   justify-content: center;
   z-index: 1000;
 }
-
 .modal-content {
   background: var(--md-surface);
   padding: 24px;
@@ -373,13 +316,11 @@
   max-height: 90vh;
   overflow-y: auto;
 }
-
 .modal-content h2 {
   margin: 0 0 20px 0;
   font-size: 1.5rem;
   color: var(--md-on-surface);
 }
-
 /* =========================
    FORM
    ========================= */
@@ -388,19 +329,16 @@
   flex-direction: column;
   gap: 16px;
 }
-
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
-
 .form-group label {
   font-weight: 500;
   color: var(--md-on-surface);
   font-size: 0.9rem;
 }
-
 .form-group input,
 .form-group select {
   padding: 12px;
@@ -410,21 +348,18 @@
   background: var(--md-surface);
   color: var(--md-on-surface);
 }
-
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
   border-color: var(--md-primary);
   box-shadow: 0 0 0 2px rgba(27,94,32,.15);
 }
-
 .form-actions {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
   margin-top: 24px;
 }
-
 /* =========================
    STATES
    ========================= */
@@ -433,16 +368,13 @@
   padding: 40px;
   font-size: 1.1rem;
 }
-
 .loading {
   color: var(--md-on-surface-variant);
 }
-
 .error {
   color: var(--md-error);
   font-weight: 500;
 }
-
 /* =========================
    RESPONSIVE
    ========================= */
@@ -452,15 +384,12 @@
     gap: 16px;
     text-align: center;
   }
-
   .admin-header h1 {
     font-size: 1.5rem;
   }
-
   .stats-cards {
     grid-template-columns: 1fr;
   }
-
   .table-container {
     /* mobile: leave extra space for stacked header + stats */
     max-height: calc(100vh - 200px);
@@ -473,7 +402,6 @@
     overflow-y: auto;
   }
 }
-
 @media (max-width: 900px) {
   .admin-page {
     padding: 16px;
@@ -481,7 +409,6 @@
     overflow-y: visible;
   }
 }
-
 /* =========================
    FILTERS (Material 3)
    ========================= */
@@ -493,27 +420,23 @@
   border: 1px solid var(--md-outline);
   margin-bottom: 24px;
 }
-
 .filters-row {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
   align-items: flex-end;
 }
-
 .filter-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
   min-width: 160px;
 }
-
 .filter-group label {
   font-size: 0.8rem;
   font-weight: 500;
   color: var(--md-on-surface-variant);
 }
-
 .filter-group select,
 .filter-group input {
   padding: 10px 12px;
@@ -522,11 +445,9 @@
   background: var(--md-surface);
   color: var(--md-on-surface);
 }
-
 .filter-actions {
   margin-left: auto;
 }
-
 .reset-btn {
   background: transparent;
   border: 1px solid var(--md-outline);
@@ -535,7 +456,6 @@
   border-radius: var(--md-radius-md);
   cursor: pointer;
 }
-
 .reset-btn:hover {
   background: var(--md-surface-container);
 }

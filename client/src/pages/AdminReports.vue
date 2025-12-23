@@ -60,6 +60,7 @@
 
 <script>
 import '../css/adminTrails.css'
+import '../css/adminReport.css'
 
 export default {
   name: 'AdminReports',
@@ -152,10 +153,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-/* Small component-specific adjustments */
-.report-text { max-width: 480px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.report-thumb { max-width: 120px; max-height: 80px; object-fit: cover; border-radius: 8px; }
-.actions button { margin-right: 8px; }
-</style>
