@@ -1,56 +1,68 @@
 <template>
-  <div class="admin-reports-page">
-    <div class="header">
-      <h1>Segnalazioni Utenti</h1>
-      <p class="muted">Gestisci le segnalazioni inviate dagli utenti. Approva per pubblicare, rifiuta per scartare.</p>
+  <div class="admin-page">
+    <div class="md-topbar">
+      <div class="topbar-inner">
+        <div class="topbar-left">
+          <h1>Segnalazioni Utenti</h1>
+          <p class="subtitle">Gestisci le segnalazioni inviate dagli utenti. Approva per pubblicare, rifiuta per scartare.</p>
+        </div>
+        <div class="topbar-right">
+          <button class="btn-primary" @click="loadReports">Aggiorna</button>
+        </div>
+      </div>
     </div>
 
     <div v-if="loading" class="loading">Caricamento segnalazioni...</div>
     <div v-else-if="error" class="error">{{ error }}</div>
 
-    <div v-else class="reports-list">
-      <table class="reports-table">
-        <thead>
-          <tr>
-            <th>Trail</th>
-            <th>Utente</th>
-            <th>Testo</th>
-            <th>Gravità</th>
-            <th>Data</th>
-            <th>Stato</th>
-            <th>Azioni</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="r in reports" :key="r._id">
-            <td>{{ r.trail ? r.trail.name : '—' }}</td>
-            <td>{{ r.user ? (r.user.name || r.user.email) : '—' }}</td>
-            <td class="report-text">{{ r.text }}</td>
-            <td>{{ r.severity }}</td>
-            <td>{{ formatDate(r.createdAt) }}</td>
-            <td>
-              <div v-if="r.imageUrl">
-                <img :src="r.imageUrl" alt="foto" style="max-width:120px; max-height:80px; object-fit:cover;" />
-              </div>
-            </td>
-            <td>
-              <span :class="['status', r.status]">{{ r.status }}</span>
-            </td>
-            <td class="actions">
-              <button v-if="r.status !== 'approved'" class="btn-approve" @click="updateStatus(r, 'approved')">Approva</button>
-              <button v-if="r.status !== 'rejected'" class="btn-reject" @click="updateStatus(r, 'rejected')">Rifiuta</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div v-else class="admin-content">
+      <div class="table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Trail</th>
+              <th>Utente</th>
+              <th>Testo</th>
+              <th>Gravità</th>
+              <th>Data</th>
+              <th>Immagine</th>
+              <th>Stato</th>
+              <th>Azioni</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="r in reports" :key="r._id">
+              <td>{{ r.trail ? r.trail.name : '—' }}</td>
+              <td>{{ r.user ? (r.user.name || r.user.email) : '—' }}</td>
+              <td class="report-text">{{ r.text }}</td>
+              <td>{{ r.severity }}</td>
+              <td>{{ formatDate(r.createdAt) }}</td>
+              <td>
+                <div v-if="r.imageUrl">
+                  <img :src="r.imageUrl" alt="foto" class="report-thumb" />
+                </div>
+              </td>
+              <td>
+                <span :class="['status-badge', r.status]">{{ r.status }}</span>
+              </td>
+              <td class="actions">
+                <button v-if="r.status !== 'approved'" class="btn-primary" @click="updateStatus(r, 'approved')">Approva</button>
+                <button v-if="r.status !== 'rejected'" class="btn-danger" @click="updateStatus(r, 'rejected')">Rifiuta</button>
+                <button class="btn-secondary" @click="deleteReport(r)">Elimina</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import '../css/adminTrails.css'
+
 export default {
-  name: 'AdminReports'
-  ,
+  name: 'AdminReports',
   data() {
     return {
       reports: [],
@@ -142,18 +154,8 @@ export default {
 </script>
 
 <style scoped>
-.admin-reports-page { padding: 24px; max-width: 1200px; margin: 0 auto; }
-
-.header { margin-bottom: 16px; }
-.muted { color: #6b7280; }
-.reports-table { width: 100%; border-collapse: collapse; }
-.reports-table th, .reports-table td { padding: 8px 12px; border-bottom: 1px solid #e5e7eb; text-align: left; vertical-align: middle; }
+/* Small component-specific adjustments */
 .report-text { max-width: 480px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.status.pending { color: #f59e0b; }
-.status.approved { color: #10b981; }
-.status.rejected { color: #ef4444; }
-.actions button { margin-right: 6px; }
-.btn-approve { background: #10b981; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
-.btn-reject { background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
-.btn-delete { background: transparent; color: #374151; border: 1px solid #e5e7eb; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+.report-thumb { max-width: 120px; max-height: 80px; object-fit: cover; border-radius: 8px; }
+.actions button { margin-right: 8px; }
 </style>

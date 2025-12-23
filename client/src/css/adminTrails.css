@@ -29,11 +29,12 @@
    PAGE LAYOUT
    ========================= */
 .admin-page {
-  padding: 24px;
+  padding: 20px;
   max-width: 1400px;
   margin: 0 auto;
-  /* Prevent the main page from showing global scrollbars — table card will manage scrolling */
-  overflow: hidden;
+  /* Allow page scrolling so all cards are reachable */
+  overflow: auto;
+  max-height: 100vh;
 }
 
 .admin-content {
@@ -105,32 +106,32 @@
    ========================= */
 .stats-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  margin-bottom: 32px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
 .stat-card {
   background: var(--md-surface);
-  padding: 20px;
-  border-radius: var(--md-radius-lg);
+  padding: 12px;
+  border-radius: 10px;
   box-shadow: var(--md-elevation-1);
   text-align: center;
   border: 1px solid var(--md-outline);
 }
 
 .stat-card h3 {
-  font-size: 2.5rem;
+  font-size: 1.6rem;
   font-weight: 700;
   color: var(--md-primary);
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
 }
 
 .stat-card p {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--md-on-surface-variant);
   margin: 0;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* =========================
@@ -181,6 +182,23 @@
   font-weight: 600;
   color: var(--md-on-surface);
   border-bottom: 1px solid var(--md-outline);
+  /* make header cells sticky when scrolling inside the .table-container */
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--md-surface-container);
+  backdrop-filter: blur(4px);
+}
+
+/* add a subtle separator shadow so header stands out over rows */
+.admin-table thead th::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(0,0,0,0.04), rgba(0,0,0,0));
 }
 
 .admin-table td {
@@ -276,6 +294,32 @@
   background: var(--md-error);
   color: var(--md-on-primary);
 }
+
+/* Primary button (Material3 look) */
+.btn-primary {
+  background: linear-gradient(90deg, var(--md-primary), color-mix(in srgb, var(--md-primary) 80%, black 10%));
+  color: var(--md-on-primary);
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(27,94,32,0.08);
+}
+
+.btn-primary:hover { transform: translateY(-2px); }
+
+/* Status badges for reports */
+.status-badge {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-block;
+}
+.status-badge.pending { background: rgba(245,158,11,0.08); color: #f59e0b; }
+.status-badge.approved { background: rgba(16,185,129,0.08); color: #10b981; }
+.status-badge.rejected { background: rgba(239,68,68,0.08); color: #ef4444; }
 
 .edit-btn, .delete-btn {
   padding: 4px 8px;
