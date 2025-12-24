@@ -1,18 +1,41 @@
 <template>
   <div class="notifications-page">
-    <h1>Notifiche</h1>
+    <header class="notifications-header">
+      <div class="header-left">
+        <h1>Notifiche</h1>
+        <div class="header-sub">Qui trovi gli avvisi e le segnalazioni recenti</div>
+      </div>
+      <div class="header-actions">
+        <span class="unread-count" v-if="unreadCount">{{ unreadCount }} non lette</span>
+        <button v-if="unreadCount" class="flat action" @click="markAllRead">Segna tutte come lette</button>
+      </div>
+    </header>
 
-    <div v-if="loading">Caricamento...</div>
-    <div v-else-if="error" class="error">{{ error }}</div>
+    <div v-if="loading" class="center">Caricamento...</div>
+    <div v-else-if="error" class="error center">{{ error }}</div>
 
     <div v-else>
-      <ul v-if="items.length">
-        <li v-for="it in items" :key="it._id" class="notice">
-          <div class="notice-head">
-            <strong>{{ it.title }}</strong>
-            <small class="muted">{{ new Date(it.createdAt).toLocaleString() }}</small>
+      <ul v-if="items.length" class="notice-list">
+        <li v-for="it in items" :key="it._id" :class="['notice', { unread: !it.read }]">
+          <div class="notice-left">
+            <div class="avatar">{{ initials(it.title) }}</div>
           </div>
-          <div class="notice-body">{{ it.message || it.text }}</div>
+
+          <div class="notice-main">
+            <div class="title-row">
+              <div class="title-block">
+                <strong class="title">{{ it.title }}</strong>
+                <span class="badge" v-if="!it.read">Nuova</span>
+              </div>
+              <small class="muted time">{{ formatRelative(it.createdAt) }}</small>
+            </div>
+            <div class="notice-body">{{ it.message || it.text || '—' }}</div>
+          </div>
+
+          <div class="notice-actions">
+            <button class="action-btn" @click="toggleRead(it)">{{ it.read ? 'Segna non letta' : 'Segna letta' }}</button>
+            <button class="action-btn danger" @click="remove(it)">Elimina</button>
+          </div>
         </li>
       </ul>
       <div v-else class="muted">Nessuna notifica</div>
@@ -21,13 +44,19 @@
 </template>
 
 <script>
+import '../css/Notifications.css';
+
 export default {
   name: 'Notifications',
   data() { return { items: [], loading: false, error: null } },
+  computed: {
+    unreadCount() { return this.items.filter(i => !i.read).length }
+  },
   created() { this.load(); },
   methods: {
     async load() {
-      this.loading = true; this.error = null;
+      this.loading = true;
+      this.error = null;
       try {
         const [notesRes, reportsRes] = await Promise.all([
           fetch('/api/notifications', { headers: this.getAuthHeader() }),
@@ -37,11 +66,15 @@ export default {
         const reports = reportsRes && reportsRes.ok ? await reportsRes.json() : [];
 
         // normalize items: notifications first
-        const normNotes = notes.map(n => ({ _id: n._id, title: n.trail ? n.trail.name : 'Avviso', message: n.message, createdAt: n.createdAt, read: n.read }));
-        const normReports = reports.map(r => ({ _id: r._id, title: r.trail ? r.trail.name : 'Segnalazione', text: r.text, createdAt: r.createdAt }));
+        const normNotes = notes.map(n => ({ _id: n._id, title: n.title || (n.trail ? n.trail.name : 'Avviso'), message: n.message, createdAt: n.createdAt, read: !!n.read }));
+        const normReports = reports.map(r => ({ _id: r._id, title: r.title || (r.trail ? r.trail.name : 'Segnalazione'), text: r.text, createdAt: r.createdAt, read: true }));
         this.items = [...normNotes, ...normReports];
-      } catch (e) { this.error = 'Server non raggiungibile' }
-      finally { this.loading = false }
+      } catch (e) {
+        this.error = 'Server non raggiungibile';
+        console.error(e);
+      } finally {
+        this.loading = false;
+      }
     },
 
     getAuthHeader() {
@@ -52,16 +85,67 @@ export default {
         if (!parsed || !parsed.token) return {};
         return { Authorization: `Bearer ${parsed.token}` };
       } catch (e) { return {} }
+    },
+
+    initials(text) {
+      if (!text) return '•';
+      return text.split(' ').slice(0,1).map(s => s[0]).join('').toUpperCase();
+    },
+
+    formatRelative(dateStr) {
+      if (!dateStr) return '';
+      const d = new Date(dateStr);
+      const diff = Date.now() - d.getTime();
+      const sec = Math.floor(diff/1000);
+      if (sec < 60) return `${sec}s fa`;
+      const min = Math.floor(sec/60);
+      if (min < 60) return `${min}m fa`;
+      const hrs = Math.floor(min/60);
+      if (hrs < 24) return `${hrs}h fa`;
+      const days = Math.floor(hrs/24);
+      return `${days}d fa`;
+    },
+
+    async toggleRead(item) {
+      const orig = item.read;
+      item.read = !orig; // optimistic
+      try {
+        await fetch(`/api/notifications/${item._id}/mark-read`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...this.getAuthHeader() }, body: JSON.stringify({ read: item.read }) });
+      } catch (e) {
+        item.read = orig; // rollback
+        console.warn('mark-read failed', e);
+      }
+    },
+
+    async remove(item) {
+      if (!confirm('Eliminare questa notifica?')) return;
+      const idx = this.items.findIndex(i => i._id === item._id);
+      if (idx === -1) return;
+      const removed = this.items.splice(idx,1)[0];
+      try {
+        await fetch(`/api/notifications/${item._id}`, { method: 'DELETE', headers: this.getAuthHeader() });
+      } catch (e) {
+        // rollback
+        this.items.splice(idx,0,removed);
+        console.warn('delete failed', e);
+      }
+    },
+
+    async markAllRead() {
+      const orig = this.items.map(i => ({ id: i._id, read: i.read }));
+      this.items.forEach(i => i.read = true);
+      try {
+        await fetch('/api/notifications/mark-all-read', { method: 'POST', headers: { 'Content-Type': 'application/json', ...this.getAuthHeader() }, body: JSON.stringify({}) });
+      } catch (e) {
+        // rollback
+        orig.forEach(o => {
+          const it = this.items.find(x => x._id === o.id);
+          if (it) it.read = o.read;
+        });
+        console.warn('mark-all-read failed', e);
+      }
     }
   }
 }
 </script>
 
-<style scoped>
-.notifications-page { padding: 24px; max-width: 900px; margin: 0 auto }
-.notice { padding: 12px; border-radius: 12px; background: var(--m3-surface, #fff); margin-bottom: 12px; box-shadow: 0 6px 18px rgba(16,24,40,0.06) }
-.notice-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px }
-.notice-body { color: #374151 }
-.notice-image img { max-width:100%; border-radius:8px; margin-top:8px }
-.muted { color: #6b7280 }
-</style>

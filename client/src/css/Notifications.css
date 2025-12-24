@@ -1,0 +1,39 @@
+.notifications-page { padding: 24px; max-width: 980px; margin: 0 auto }
+
+/* Header */
+.notifications-header { margin-bottom: 18px; display:flex; align-items:center; justify-content:space-between; gap:16px }
+.header-left h1 { margin:0; font-size:20px }
+.header-sub { color:#000205; font-size:13px }
+.header-actions { display:flex; gap:12px; align-items:center }
+.unread-count { color:#065f46; font-weight:600 }
+.flat.action { background:transparent; border:1px solid rgba(0,0,0,0.06); padding:6px 10px; border-radius:10px; cursor:pointer }
+
+/* List & cards */
+.notice-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:12px }
+.notice { display:flex; gap:12px; align-items:flex-start; padding:14px; border-radius:12px; background:rgba(255,255,255,0.95); border:1px solid rgba(0,0,0,0.04); transition:box-shadow .12s ease, transform .08s ease }
+.notice:hover { box-shadow:0 6px 18px rgba(15,23,42,0.06); transform:translateY(-2px) }
+.notice.unread { border-left:4px solid #10b981 }
+.notice-left { flex:0 0 auto }
+
+/* Avatar */
+.avatar { width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,#e8f5e9,#dff3e6); display:flex; align-items:center; justify-content:center; font-weight:700; color:#0b3a24 }
+
+.notice-main { flex:1 1 auto; min-width:0 }
+.title-row { display:flex; justify-content:space-between; align-items:center }
+.title-block { display:flex; gap:8px; align-items:center }
+.title { font-size:15px; margin:0 }
+.badge { background:#06b6d4; color:white; font-size:11px; padding:3px 8px; border-radius:999px }
+.muted.time { color:#6b7280; font-size:12px }
+.notice-body { margin-top:8px; color:#374151; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden }
+
+.notice-actions { display:flex; flex-direction:column; gap:8px; align-items:flex-end }
+.action-btn { background:transparent; border:1px solid rgba(0,0,0,0.06); padding:6px 10px; border-radius:8px; cursor:pointer; color:#0b3a24 }
+.action-btn.danger { color:#b91c1c; border-color: rgba(185,28,28,0.08) }
+.muted { color:#6b7280 }
+
+/* Responsive */
+@media (max-width:900px) {
+  .notice { flex-direction:column }
+  .notice-actions { flex-direction:row; justify-content:flex-start }
+  .header-actions { flex-direction:column; align-items:flex-start }
+}
