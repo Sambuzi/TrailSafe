@@ -78,7 +78,9 @@ export default {
 
         let response = '🌿 Ecco i percorsi più adatti:\n';
         trails.forEach((trail, index) => {
-          response += `${index + 1}. "${trail.name}" - Difficoltà: ${trail.difficulty}, Lunghezza: ${trail.length_km} km\n`;
+          response += `${index + 1}. "${trail.name}" - Difficoltà: ${trail.difficulty}, Lunghezza: ${trail.length_km} km`;
+          if (trail.explanation) response += `\n   Perché: ${trail.explanation}`;
+          response += '\n';
         });
 
         this.messages.push({

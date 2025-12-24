@@ -5,6 +5,7 @@ const Trail = require('../models/Trail');
 const Report = require('../models/Report');
 
 
+
 // In-memory fallback
 let inMemory = [
   { id: 1, name: 'Sentiero dei Faggi', difficulty: 'Facile', status: 'Aperto' },

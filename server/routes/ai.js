@@ -28,8 +28,10 @@ router.post('/ai-search', async (req, res) => {
     );
 
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'AI search failed' });
+    console.error('AI search route error:', err);
+    // In development return details to help debug
+    const msg = (err && err.message) ? err.message : String(err);
+    res.status(500).json({ error: 'AI search failed', details: msg });
   }
 });
 
