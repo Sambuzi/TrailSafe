@@ -1,0 +1,55 @@
+.admin-profile-page {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.admin-profile-page h1 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.admin-profile-page p {
+  color: #555;
+  line-height: 1.5;
+}
+
+.profile-card {
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+}
+
+.profile-header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ddd;
+}
+
+.profile-info h1 { margin: 0; font-size: 1.25rem }
+.muted { color: #666; margin-top: 4px }
+.role { margin-top: 6px; color: #444 }
+
+.profile-actions { margin-top: 12px; display:flex; gap:8px }
+.btn { padding: 8px 12px; border: 1px solid #bbb; background: #f6f6f6; border-radius:6px; cursor:pointer }
+.btn.primary { background: #2b6cb0; color: #fff; border-color: #265a9a }
+
+.profile-form { margin-top: 12px; display:flex; flex-direction:column; gap:8px }
+.profile-form label { display:flex; flex-direction:column; font-size:0.9rem }
+.profile-form input { padding:8px; border:1px solid #ddd; border-radius:4px }
+
+.profile-details { margin-top:12px }
+
+@media (max-width:600px) {
+  .profile-header { flex-direction:column; align-items:flex-start }
+}
