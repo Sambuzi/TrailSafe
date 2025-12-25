@@ -119,5 +119,19 @@ router.post('/mark-read', require('../middleware/auth'), async (req, res) => {
   }
 });
 
+// Count endpoint for admin/statistics
+router.get('/count', async (req, res) => {
+  try {
+    if (mongoose.connection.readyState === 1) {
+      const c = await Report.countDocuments();
+      return res.json({ count: c });
+    }
+    return res.json({ count: 0 });
+  } catch (err) {
+    console.error('Failed to get reports count', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;
 

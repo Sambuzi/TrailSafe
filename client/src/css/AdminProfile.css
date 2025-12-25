@@ -53,3 +53,132 @@
 @media (max-width:600px) {
   .profile-header { flex-direction:column; align-items:flex-start }
 }
+
+/* Admin tabs */
+.admin-tabs { display:flex; gap:8px; margin-bottom:12px }
+.admin-tab { padding:8px 12px; border-radius:6px; cursor:pointer; background:#f6f6f6; border:1px solid #e6e6e6 }
+.admin-tab.active { background:#6750a4; color:#fff; border-color:#5b3f95 }
+.admin-content-area { margin-top:12px }
+
+.cards-row { display:flex; gap:16px; margin-bottom:16px }
+.m3-card { flex:1; padding:16px; border-radius:12px; background: linear-gradient(180deg,#ffffff,#fafafa); box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.06); display:flex; flex-direction:column; justify-content:center }
+.stat-card .card-label { font-size:0.85rem; color:#666 }
+.stat-card .card-value { font-size:1.6rem; font-weight:600; margin-top:8px; color:#1f2937 }
+
+.users-top { display:flex; gap:8px; align-items:center; margin-bottom:12px }
+.users-table { width:100%; border-collapse:collapse }
+.users-table th, .users-table td { padding:8px; border-bottom:1px solid #eee }
+.edit-user-panel { margin-top:12px; padding:12px; border:1px solid #e6e6e6; border-radius:6px; background:#fff }
+.edit-user-panel label { display:flex; flex-direction:column; margin-bottom:8px }
+.edit-actions { display:flex; gap:8px; margin-top:8px }
+
+.btn { padding:8px 12px; border-radius:10px; border:none; box-shadow:none }
+.btn.primary { background:#6750a4; color:#fff }
+.btn-danger { background:#fff; color:#b00020; border:1px solid rgba(176,0,32,0.12) }
+
+.muted { color:#666 }
+.error { color:#b00020 }
+
+@media (max-width:800px) {
+  .cards-row { flex-direction:column }
+}
+
+/* Material-3 inspired styles (enhanced) */
+:root{
+  --md-primary: #33691e;
+  --md-on-primary: #ffffff;
+  --md-surface: #ffffff;
+  --md-surface-variant: #f3f5f4;
+  --md-outline: rgba(0,0,0,0.08);
+  --md-shadow: rgba(16,24,32,0.08);
+  --md-error: #b00020;
+  --radius-s: 8px;
+  --radius-m: 12px;
+  --space-s: 8px;
+  --space-m: 16px;
+  --space-l: 24px;
+}
+
+.admin-profile-page{ padding: var(--space-l); max-width:1200px; margin:0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial }
+.admin-grid{ display:grid; grid-template-columns: 1fr 1.6fr; gap:28px; align-items:start }
+@media (max-width:1200px){ .admin-grid{ grid-template-columns: 1fr 1.2fr } }
+@media (max-width:980px){ .admin-grid{ grid-template-columns: 1fr } }
+
+/* add right padding so the users card doesn't touch the viewport edge */
+.right-column{ padding-right: 50px }
+
+.m3-card{ background: var(--md-surface); border-radius: var(--radius-m); padding: var(--space-m); box-shadow: 0 1px 3px var(--md-shadow); border:1px solid var(--md-outline) }
+.cards-row{ display:flex; gap:16px; margin-bottom:18px }
+.stat-card{ display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:88px }
+.stat-card .card-label{ font-size:0.9rem; color:#4b5563 }
+.stat-card .card-value{ font-size:2rem; font-weight:700; margin-top:6px; color:var(--md-primary) }
+
+/* aggregated stats card */
+.stats-aggregate{ padding:18px }
+.stats-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; align-items:center }
+.stat-item{ display:flex; flex-direction:column; align-items:center; justify-content:center; padding:12px; background: linear-gradient(180deg,#ffffff,#fbfdfb); border-radius:10px; border:1px solid rgba(0,0,0,0.04) }
+.stat-label{ font-size:0.9rem; color:#475569 }
+.stat-value{ font-size:1.8rem; font-weight:800; color:var(--md-primary); margin-top:6px }
+.stats-footer{ margin-top:10px; font-size:0.85rem; color:#5b6b63; text-align:right }
+
+.profile-card{ margin-top:0 }
+.profile-header{ display:flex; gap:16px; align-items:center }
+.avatar{ width:88px; height:88px; border-radius:999px; object-fit:cover; border: 2px solid var(--md-surface-variant) }
+.profile-info h1{ margin:0; font-size:1.25rem }
+.muted{ color:#54616a; margin-top:6px }
+.role{ margin-top:6px; color:#102027 }
+
+.profile-actions{ margin-top:14px; display:flex; gap:10px }
+input[type="text"], input[type="email"], input[type="password"], select{ width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--md-outline); background:var(--md-surface) }
+.profile-form{ margin-top:12px; display:flex; flex-direction:column; gap:10px }
+
+.users-card h3{ margin:0 0 10px 0 }
+.users-top{ display:flex; gap:8px; align-items:center; margin-bottom:12px }
+.users-top input{ flex:1 }
+
+.admin-table{ width:100%; border-collapse:collapse; font-size:0.95rem }
+.admin-table th{ text-align:left; padding:10px 8px; color:#6b7280; font-weight:600 }
+.admin-table td{ padding:12px 8px; border-top:1px solid #eef2f4 }
+.edit-user-panel{ margin-top:12px; padding:12px; border-radius:8px; background:var(--md-surface-variant); border:1px solid rgba(0,0,0,0.04) }
+.edit-user-panel label{ display:block; margin-bottom:8px }
+.edit-actions{ display:flex; gap:8px; margin-top:8px }
+
+.btn{ padding:8px 14px; border-radius:10px; background:transparent; border:1px solid transparent; cursor:pointer; font-weight:600 }
+.btn.primary{ background:var(--md-primary); color:var(--md-on-primary); border-color:transparent }
+.btn.tonal{ background:#e6f4e6; color:var(--md-primary); border-color:transparent }
+.btn-danger{ background:transparent; color:var(--md-error); border:1px solid rgba(176,0,32,0.12) }
+
+.muted{ color:#6b7280 }
+.error{ color:var(--md-error) }
+
+@media (max-width:1100px){ .stats-grid{ grid-template-columns: repeat(2, 1fr) } }
+@media (max-width:700px){ .cards-row{ flex-direction:column } .stats-grid{ grid-template-columns: 1fr } .stat-item{ min-height:72px } }
+
+.users-card{ position:sticky; top:24px; width:auto; max-width:900px; margin:0 auto }
+
+/* admin info card under stats */
+.admin-info-card{ margin-top:14px; padding:18px; border-radius:12px }
+.admin-info-card h3{ margin:0 0 12px 0 }
+.admin-info-grid{ display:grid; grid-template-columns: 140px 1fr; gap:8px 18px; align-items:center }
+.admin-info-grid strong{ color:#374151 }
+
+
+/* Table container inside the card */
+.users-card .table-wrap{ background: #fff; border-radius:12px; padding:0; overflow:auto; max-height:640px; box-shadow: 0 1px 6px rgba(16,24,32,0.06); border:1px solid rgba(0,0,0,0.04) }
+.users-card .admin-table thead{ background: #f7faf7; position:sticky; top:0; z-index:2 }
+.users-card .admin-table th{ padding:12px 14px; font-size:0.9rem }
+.users-card .admin-table td{ background: transparent; padding:12px 14px }
+.users-card .admin-table tbody tr:nth-child(odd){ background: #ffffff }
+.users-card .admin-table tbody tr:nth-child(even){ background: #fbfdfb }
+.users-card .actions-cell{ display:flex; gap:8px; justify-content:flex-end }
+
+/* Buttons in table */
+.btn.icon{ padding:6px 10px; border-radius:8px; background:transparent; border:1px solid rgba(0,0,0,0.04) }
+.btn.icon:hover{ background: rgba(0,0,0,0.03) }
+.btn.icon.danger{ color: var(--md-error); border-color: rgba(176,0,32,0.12); background: rgba(176,0,32,0.02) }
+
+/* Ensure card heading and search area remain padded */
+.users-card > h3{ margin-bottom:8px }
+.users-card .users-top{ padding:0 4px 12px 0 }
+
+
