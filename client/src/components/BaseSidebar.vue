@@ -1,5 +1,5 @@
 <template>
-  <aside class="sidebar">
+  <aside class="sidebar" role="navigation" aria-label="Main navigation">
     <div class="logo">
       <img v-if="logoSrc" :src="logoSrc" alt="TrailSafe logo" />
       <div v-else class="logo-text">{{ logoText }}</div>
@@ -11,6 +11,7 @@
         :key="idx"
         :to="item.to"
         :title="item.title"
+        :aria-label="item.label"
         :class="['item', { 'my-active': isActive(item) }]"
       >
         <span class="material-symbols-rounded">{{ item.icon }}</span>
@@ -55,92 +56,136 @@ export default {
 </script>
 
 <style scoped>
+/* Mobile-first: bottom navigation */
 .sidebar {
   position: fixed;
   left: 0;
-  top: 0;
-  height: 100vh;
-  width: 88px;
+  right: 0;
+  bottom: 0;
+  height: 72px;
   background: #ffffff;
-  border-right: 1px solid #e0e0e0;
+  border-top: 1px solid #e0e0e0;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  padding: 16px 8px;
+  justify-content: space-around;
+  padding: 8px 12px;
   box-sizing: border-box;
+  z-index: 30;
 }
 
 .logo {
-  width: 56px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 24px;
+  display: none; /* hide logo on very small nav to maximize space */
 }
 
+/* Ensure logo image is constrained and doesn't overflow */
 .logo img {
   max-width: 100%;
   max-height: 100%;
+  width: auto;
+  height: auto;
   object-fit: contain;
+  display: block;
 }
 
-.logo-text {
-  font-weight: 700;
-  color: #0f4c3d;
-  background: #e8f5e9;
-  border-radius: 12px;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
+/* Mobile nav layout: make the nav a horizontal flex container */
 nav {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 8px;
+  width: 100%;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: nowrap;
 }
 
 .item {
-  width: 56px;
+  min-width: 56px;
   height: 56px;
-  border-radius: 16px;
-  display: flex;
+  border-radius: 14px;
+  display: inline-flex; /* keep items inline within the horizontal nav */
   align-items: center;
   justify-content: center;
   color: #1b5e20;
   text-decoration: none;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 8px;
+  flex: 0 0 auto; /* prevent item from growing/shrinking */
 }
 
+
+.item .label {
+  display: none; /* hide labels on very small screens */
+  font-size: 12px;
+}
+
+/* show the label of the active item for clarity on mobile */
+.item.my-active .label {
+  display: block;
+  font-size: 12px;
+  color: #0f4c3d;
+}
 .item:hover,
 .item.my-active {
   background: #e8f5e9;
 }
 
-/* override default router-link automatic class to avoid undesired highlighting */
-.item.router-link-active { background: transparent; }
-
-.label {
-  display: none;
-}
-
+/* Desktop: left sidebar */
 @media (min-width: 900px) {
   .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
     width: 260px;
+    height: 100vh;
+    background: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
     align-items: flex-start;
     padding: 24px;
+    justify-content: flex-start;
+  }
+
+  .logo {
+    display: flex;
+    width: 56px;
+    height: 56px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    overflow: hidden; /* hide any overflow from oversized images */
+  }
+
+  .logo img {
+    width: 56px; /* enforce exact size on desktop */
+    height: 56px;
+    max-width: 56px;
+    max-height: 56px;
+    object-fit: contain;
+    display: block;
+  }
+
+  nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
   }
 
   .item {
     width: 100%;
+    min-width: unset;
+    height: auto;
     justify-content: flex-start;
     gap: 12px;
     padding: 12px 16px;
+    flex-direction: row;
   }
 
-  .label {
+  .item .label {
     display: inline;
     font-size: 15px;
   }

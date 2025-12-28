@@ -21,12 +21,18 @@ html, body, #app {
 /* CONTENUTO PRINCIPALE */
 .main-area {
   position: fixed;
-  left: 88px;
+  left: 0;
   top: 0;
   right: 0;
-  bottom: 0;
+  /* leave space for bottom nav on small screens */
+  bottom: 72px;
   display: flex;
   flex-direction: column;
+}
+
+/* Desktop: reserve space on the left for the vertical sidebar */
+@media (min-width: 900px) {
+  .main-area { left: 260px; bottom: 0; }
 }
 /* CONTENT: fixed area to the right of the sidebar; scrolls internally */
 .content {
@@ -36,6 +42,8 @@ html, body, #app {
   top: 64px; /* below topbar */
   bottom: 0; /* fill to bottom so this area can scroll internally */
   padding: 12px 20px 24px 20px; /* more breathing room and bottom padding */
+  /* ensure content does not hide behind mobile bottom nav */
+  padding-bottom: calc(24px + 72px);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -81,3 +89,16 @@ html, body, #app {
 /* TOPBAR */
 .topbar { display: flex; justify-content: flex-end; align-items: center; padding: 12px 20px; color: #fff; height: 64px; }
 .topbar-right { margin-left: auto }
+
+/* Ensure the logo image never becomes oversized anywhere */
+img[alt="TrailSafe logo"] {
+  max-width: 56px !important;
+  max-height: 56px !important;
+  width: auto !important;
+  height: auto !important;
+  display: block;
+}
+
+/* small logo text styling */
+.logo-text { width: 40px; height: 40px; display:flex; align-items:center; justify-content:center; font-weight:700; }
+
