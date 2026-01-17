@@ -5,6 +5,21 @@
 	text-overflow: ellipsis;
 }
 
+.report-text .report-preview {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .report-thumb {
 	max-width: 120px;
 	max-height: 80px;
@@ -12,6 +27,74 @@
 	border-radius: 8px;
 }
 
+.report-full-text {
+  white-space: pre-wrap;
+  line-height: 1.4;
+  color: var(--md-on-surface);
+}
+
+.report-full-image img { max-width: 100%; max-height: 360px; object-fit: contain; margin-top: 12px; border-radius: 8px }
+
 .actions button {
 	margin-right: 8px;
 }
+
+/* Modal buttons alignment and delete styling */
+.modal-actions { display:flex !important; gap:8px !important; justify-content:flex-end !important; align-items:center !important; margin-top:16px !important; flex-wrap: nowrap !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important }
+/* Force buttons to be inline and not grow to full width */
+.modal-actions button { display:inline-flex !important; align-items:center !important; justify-content:center !important; min-height:40px !important; white-space:nowrap !important; flex-shrink:0 !important; width: auto !important }
+.modal-actions .btn-primary, .modal-actions .btn-danger, .modal-actions .btn-secondary, .modal-actions .btn-delete { padding: 8px 14px; border-radius: 8px; font-weight:600 }
+
+/* Explicit ordering to keep reject/approve adjacent */
+.modal-actions .btn-danger { order: 1 }
+.modal-actions .btn-primary { order: 2 }
+.modal-actions .btn-delete { order: 3 }
+
+.btn-delete { background: transparent; color: var(--md-error); border: 1px solid rgba(176,0,32,0.12); cursor: pointer }
+.btn-delete:hover { background: rgba(176,0,32,0.04) }
+
+/* On very small screens reduce spacing and padding but keep buttons on one row */
+@media (max-width:480px) {
+  .modal-actions { gap:6px }
+  .modal-actions .btn-primary, .modal-actions .btn-danger, .modal-actions .btn-delete { padding: 6px 10px; font-size: 0.9rem }
+}
+
+/* Modal close button (X) */
+.modal-content { position: relative }
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--md-on-surface);
+  padding: 6px;
+  border-radius: 6px;
+}
+.modal-close:hover { background: rgba(0,0,0,0.04) }
+
+/* Center table card and make it responsive */
+.admin-page .table-container {
+  margin: 0 auto;            /* center horizontally */
+  max-width: 920px;         /* same card width used elsewhere */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Add horizontal padding on very small screens so the card doesn't touch viewport edges */
+@media (max-width: 600px) {
+  .admin-page .table-container {
+    padding: 0 12px;
+    max-width: 100%;
+  }
+}
+
+/* Ensure the inner table fits the centered card */
+.admin-page .table-container .admin-table {
+  width: 100%;
+  table-layout: auto;
+}
+

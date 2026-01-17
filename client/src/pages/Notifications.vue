@@ -21,7 +21,7 @@
             <div class="avatar">{{ initials(it.title) }}</div>
           </div>
 
-          <div class="notice-main">
+          <div class="notice-main" role="button" tabindex="0" @click="showNotice(it)">
             <div class="title-row">
               <div class="title-block">
                 <strong class="title">{{ it.title }}</strong>
@@ -39,6 +39,22 @@
         </li>
       </ul>
       <div v-else class="muted">Nessuna notifica</div>
+
+      <!-- Modal for full notice -->
+      <div v-if="showNoticeModal" class="modal-overlay" @click="closeNoticeModal">
+        <div class="modal-content" @click.stop>
+          <button class="modal-close" @click="closeNoticeModal">&times;</button>
+          <h2>{{ selectedNotice ? selectedNotice.title : '' }}</h2>
+          <small class="muted">{{ selectedNotice ? formatRelative(selectedNotice.createdAt) : '' }}</small>
+          <div class="modal-body" style="margin-top:12px;">{{ selectedNotice ? (selectedNotice.message || selectedNotice.text || '—') : '' }}</div>
+          <div v-if="selectedNotice && selectedNotice.imageUrl" style="margin-top:12px;"><img :src="selectedNotice.imageUrl" style="max-width:100%; border-radius:8px;" /></div>
+          <div class="form-actions" style="margin-top:16px; justify-content:flex-end;">
+            <button v-if="selectedNotice && selectedNotice.type === 'note'" class="action-btn" @click="toggleRead(selectedNotice)">{{ selectedNotice && selectedNotice.read ? 'Segna non letta' : 'Segna letta' }}</button>
+            <button v-if="selectedNotice && selectedNotice.type === 'note'" class="action-btn danger" @click="remove(selectedNotice)">Elimina</button>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -48,7 +64,7 @@ import '../css/Notifications.css';
 
 export default {
   name: 'Notifications',
-  data() { return { items: [], loading: false, error: null } },
+  data() { return { items: [], loading: false, error: null, showNoticeModal: false, selectedNotice: null } },
   computed: {
     unreadCount() { return this.items.filter(i => !i.read).length }
   },
@@ -66,8 +82,8 @@ export default {
         const reports = reportsRes && reportsRes.ok ? await reportsRes.json() : [];
 
         // normalize items: notifications first
-        const normNotes = notes.map(n => ({ _id: n._id, title: n.title || (n.trail ? n.trail.name : 'Avviso'), message: n.message, createdAt: n.createdAt, read: !!n.read }));
-        const normReports = reports.map(r => ({ _id: r._id, title: r.title || (r.trail ? r.trail.name : 'Segnalazione'), text: r.text, createdAt: r.createdAt, read: true }));
+        const normNotes = notes.map(n => ({ _id: n._id, type: 'note', title: n.title || (n.trail ? n.trail.name : 'Avviso'), message: n.message, createdAt: n.createdAt, read: !!n.read }));
+        const normReports = reports.map(r => ({ _id: r._id, type: 'report', title: r.title || (r.trail ? r.trail.name : 'Segnalazione'), text: r.text, imageUrl: r.imageUrl, createdAt: r.createdAt, read: true }));
         this.items = [...normNotes, ...normReports];
       } catch (e) {
         this.error = 'Server non raggiungibile';
@@ -123,7 +139,17 @@ export default {
       if (idx === -1) return;
       const removed = this.items.splice(idx,1)[0];
       try {
-        await fetch(`/api/notifications/${item._id}`, { method: 'DELETE', headers: this.getAuthHeader() });
+        // only notifications (type 'note') have delete endpoint
+        if (item.type === 'note') {
+          await fetch(`/api/notifications/${item._id}`, { method: 'DELETE', headers: this.getAuthHeader() });
+        } else {
+          // if it's a report, just remove locally (cannot delete public reports from client)
+          // noop server-side
+        }
+        // if modal was open on this item, close it
+        if (this.selectedNotice && this.selectedNotice._id === item._id) {
+          this.closeNoticeModal();
+        }
       } catch (e) {
         // rollback
         this.items.splice(idx,0,removed);
@@ -144,6 +170,20 @@ export default {
         });
         console.warn('mark-all-read failed', e);
       }
+    },
+
+    showNotice(item) {
+      // open modal and mark as read if it's a notification
+      this.selectedNotice = item;
+      this.showNoticeModal = true;
+      if (item.type === 'note' && !item.read) {
+        this.toggleRead(item);
+      }
+    },
+
+    closeNoticeModal() {
+      this.selectedNotice = null;
+      this.showNoticeModal = false;
     }
   }
 }

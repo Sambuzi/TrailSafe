@@ -27,15 +27,16 @@
               <th>Data</th>
               <th>Immagine</th>
               <th>Stato</th>
-              <th>Azioni</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="r in reports" :key="r._id">
               <td>{{ r.trail ? r.trail.name : '—' }}</td>
               <td>{{ r.user ? (r.user.name || r.user.email) : '—' }}</td>
-              <td class="report-text">{{ r.text }}</td>
-              <td>{{ r.severity }}</td>
+              <td class="report-text">
+                <button class="report-preview" @click="showReport(r)" aria-label="Visualizza testo segnalazione">{{ r.text }}</button>
+              </td>
+              <td>{{ formatSeverity(r.severity) }}</td>
               <td>{{ formatDate(r.createdAt) }}</td>
               <td>
                 <div v-if="r.imageUrl">
@@ -45,14 +46,26 @@
               <td>
                 <span :class="['status-badge', r.status]">{{ r.status }}</span>
               </td>
-              <td class="actions">
-                <button v-if="r.status !== 'approved'" class="btn-primary" @click="updateStatus(r, 'approved')">Approva</button>
-                <button v-if="r.status !== 'rejected'" class="btn-danger" @click="updateStatus(r, 'rejected')">Rifiuta</button>
-                <button class="btn-secondary" @click="deleteReport(r)">Elimina</button>
-              </td>
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Modal per testo segnalazione -->
+      <div v-if="showReportModal" class="modal-overlay" @click="closeReportModal">
+        <div class="modal-content" @click.stop>
+          <h2>Segnalazione</h2>
+          <p class="report-full-text">{{ selectedReport ? selectedReport.text : '' }}</p>
+          <div v-if="selectedReport && selectedReport.imageUrl" class="report-full-image">
+            <img :src="selectedReport.imageUrl" alt="Immagine segnalazione" />
+          </div>
+          <button class="modal-close" @click="closeReportModal" aria-label="Chiudi">&times;</button>
+          <div class="form-actions modal-actions">
+            <button v-if="selectedReport && selectedReport.status !== 'rejected'" class="btn-danger" @click="updateStatus(selectedReport, 'rejected')">Rifiuta</button>
+            <button v-if="selectedReport && selectedReport.status !== 'approved'" class="btn-primary" @click="updateStatus(selectedReport, 'approved')">Approva</button>
+            <button class="btn-delete" @click="deleteReport(selectedReport)">Elimina</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -68,7 +81,9 @@ export default {
     return {
       reports: [],
       loading: false,
-      error: null
+      error: null,
+      showReportModal: false,
+      selectedReport: null
     };
   },
 
@@ -96,6 +111,13 @@ export default {
         const res = await fetch('/api/reports', { headers: this.getAuthHeader() });
         if (!res.ok) {
           const body = await res.json();
+          // if unauthorized, clear saved credentials and redirect to login
+          if (res.status === 401) {
+            try { localStorage.removeItem('ts_user'); } catch (e) {}
+            this.error = 'Sessione scaduta o non autorizzata. Effettua il login.';
+            setTimeout(() => { this.$router && this.$router.push('/login'); }, 800);
+            return;
+          }
           this.error = body.error || 'Errore nel recupero delle segnalazioni';
           return;
         }
@@ -112,6 +134,25 @@ export default {
       return new Date(d).toLocaleString();
     },
 
+    formatSeverity(s) {
+      return {
+        low: 'Bassa',
+        medium: 'Media',
+        high: 'Alta'
+      }[s] || (s || '—');
+    },
+
+
+    showReport(report) {
+      this.selectedReport = report;
+      this.showReportModal = true;
+    },
+
+    closeReportModal() {
+      this.selectedReport = null;
+      this.showReportModal = false;
+    },
+
     async updateStatus(report, status) {
       if (!confirm(`Impostare la segnalazione come "${status}"?`)) return;
       try {
@@ -122,12 +163,23 @@ export default {
         });
         if (!res.ok) {
           const body = await res.json();
+          if (res.status === 401) {
+            try { localStorage.removeItem('ts_user'); } catch (e) {}
+            alert('Sessione scaduta. Verrai reindirizzato al login.');
+            this.$router && this.$router.push('/login');
+            return;
+          }
           alert(body.error || 'Operazione fallita');
           return;
         }
         const updated = await res.json();
         const i = this.reports.findIndex(r => r._id === updated._id);
         if (i !== -1) this.reports.splice(i, 1, updated);
+        // If the modal is showing the same report, update it and close the modal to reflect the change
+        if (this.selectedReport && this.selectedReport._id === updated._id) {
+          this.selectedReport = updated;
+          this.showReportModal = false;
+        }
       } catch (e) {
         alert('Server non raggiungibile');
       }
@@ -142,10 +194,21 @@ export default {
         });
         if (!res.ok) {
           const body = await res.json();
+          if (res.status === 401) {
+            try { localStorage.removeItem('ts_user'); } catch (e) {}
+            alert('Sessione scaduta. Verrai reindirizzato al login.');
+            this.$router && this.$router.push('/login');
+            return;
+          }
           alert(body.error || 'Eliminazione fallita');
           return;
         }
         this.reports = this.reports.filter(r => r._id !== report._id);
+        // if modal was open for this report, close it
+        if (this.selectedReport && this.selectedReport._id === report._id) {
+          this.selectedReport = null;
+          this.showReportModal = false;
+        }
       } catch (e) {
         alert('Server non raggiungibile');
       }

@@ -93,10 +93,11 @@
    STATS CARDS
    ========================= */
 .stats-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  display: flex;
   gap: 12px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: stretch;
 }
 .stat-card {
   background: var(--md-surface);
@@ -105,6 +106,8 @@
   box-shadow: var(--md-elevation-1);
   text-align: center;
   border: 1px solid var(--md-outline);
+  flex: 1 1 0;
+  min-width: 160px;
 }
 .stat-card h3 {
   font-size: 1.6rem;
@@ -117,6 +120,34 @@
   color: var(--md-on-surface-variant);
   margin: 0;
   font-weight: 600;
+}
+
+/* Responsive tweaks: reduce excessive spacing on narrow/medium screens */
+@media (max-width: 700px) {
+  .stats-cards {
+    justify-content: flex-start;
+    gap: 10px;
+  }
+  .stat-card {
+    flex: 1 1 100%;
+    min-width: 0; /* allow shrinking to container width */
+  }
+}
+
+@media (min-width: 701px) and (max-width: 1200px) {
+  .stats-cards {
+    justify-content: flex-start;
+  }
+  .stat-card {
+    flex: 0 0 220px; /* fixed basis to avoid over-stretch */
+  }
+}
+
+@media (min-width: 1201px) {
+  .stats-cards {
+    justify-content: flex-start; /* keep cards aligned to the left */
+    max-width: 880px; /* prevent them from stretching too far */
+  }
 }
 /* =========================
    TABLE

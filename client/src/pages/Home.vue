@@ -185,10 +185,20 @@
         </div>
 
         <div class="form-group">
+          <label>Gravità</label>
+          <select v-model="reportForm.severity">
+            <option value="low">Bassa</option>
+            <option value="medium">Media</option>
+            <option value="high">Alta</option>
+          </select>
+          <small class="muted">La gravità aiuterà gli amministratori a prioritizzare la segnalazione.</small>
+        </div>
+
+        <div class="form-group">
           <label>Foto (opzionale)</label>
           <input type="file" accept="image/*" @change="onFileChange" />
           <div v-if="reportForm.imagePreview" style="margin-top:8px;"><img :src="reportForm.imagePreview" style="max-width:200px; max-height:120px; object-fit:cover;" /></div>
-        </div>
+        </div> 
 
         <div class="form-group">
           <label>Posizione</label>
@@ -422,12 +432,23 @@ export default {
       this.showMapPicker = false;
       this.selectedTrailData = null;
       this.reportForm = { placeName: '', trail: '', text: '', severity: 'low', location: { lat: null, lng: null }, imageBase64: null, imagePreview: null };
+      // ensure body state restored
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = '';
     },
 
     openReportModal() {
       this.showReportModal = true;
       this.showMapPicker = false;
       this.selectedTrailData = null;
+      // mark body to allow global CSS to hide nav and prevent background scroll
+      document.body.classList.add('modal-open');
+      document.body.style.overflow = 'hidden';
+      // ensure map resizes after modal opens
+      setTimeout(() => {
+        const el = this.$refs && this.$refs.reportMapPicker;
+        try { if (el && el.map) el.map.invalidateSize(); } catch(e) {}
+      }, 300);
     }
   }
 }
@@ -439,11 +460,13 @@ export default {
   position: fixed;
   inset: 0;
   display: flex;
-  align-items: center;
+  /* allow modal content to start at top and let overlay scroll if content too tall */
+  align-items: flex-start;
   justify-content: center;
   background: rgba(0,0,0,0.40);
-  z-index: 1000;
-  padding: 24px;
+  z-index: 9999; /* ensure modal sits above nav */
+  padding: 24px 16px 40px 16px;
+  overflow-y: auto; /* enable scrolling when modal content exceeds viewport */
 }
 
 .modal-content {
@@ -455,8 +478,15 @@ export default {
   box-shadow: 0px 10px 30px rgba(16,24,40,0.18);
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
-  max-height: 90vh;
-  overflow: auto;
+  max-height: calc(100vh - 80px);
+  overflow: auto; /* internal scrolling for form/map */
+  /* ensure space at bottom so buttons aren't hidden behind bottom nav */
+  padding-bottom: 96px;
+}
+
+@media (min-width: 900px) {
+  /* on desktop reduce bottom padding */
+  .modal-content { padding-bottom: 22px; }
 }
 
 .modal-content h2 {
