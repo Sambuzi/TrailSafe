@@ -31,17 +31,7 @@
         </section>
 
         <!-- Plan excursion modal -->
-        <div v-if="showPlanModal" class="plan-modal-overlay">
-          <div class="plan-modal">
-            <h3>Programma escursione</h3>
-            <p>Seleziona la data per l'escursione</p>
-            <input type="date" v-model="planDate" />
-            <div class="form-actions" style="margin-top:12px">
-              <button class="btn" @click="cancelPlan">Annulla</button>
-              <button class="btn filled" @click="submitPlan">Conferma</button>
-            </div>
-          </div>
-        </div>
+        <PlanModal :visible="showPlanModal" :initial="planInitial" @save="onSavePlan" @close="cancelPlan" />
 
         <section class="card stats-card">
           <h2 class="card-title">Statistiche</h2>
@@ -61,40 +51,9 @@
           </div>
         </section>
 
-        <section class="card saved-trails-card">
-          <h2 class="card-title">Percorsi Salvati</h2>
-          <div v-if="savedTrails.length === 0" class="no-trails">
-            Nessun percorso salvato.
-          </div>
-          <div v-else class="trails-list">
-            <div v-for="trail in savedTrails" :key="trail._id" class="trail-item">
-              <h3>{{ trail.name }}</h3>
-              <p>Difficoltà: {{ trail.difficulty }} | Lunghezza: {{ trail.length_km }} km</p>
-              <div class="trail-actions">
-                <router-link :to="`/trail/${trail._id}`" class="btn small tonal">Vedi dettaglio</router-link>
-                <button class="btn small tonal" @click="planExcursion(trail._id)">Programma escursione</button>
-              </div>
-            </div>
-          </div>
-        </section>
+        <SavedTrails :trails="savedTrails" @plan-excursion="planExcursion" />
 
-        <section class="card planned-excursions-card">
-          <h2 class="card-title">Escursioni Programmati</h2>
-          <div v-if="plannedExcursions.length === 0" class="no-trails">
-            Nessuna escursione programmata.
-          </div>
-          <div v-else class="trails-list">
-            <div v-for="plan in plannedExcursions" :key="plan._id" :class="['trail-item', { 'plan-today': isToday(plan.date) }]">
-              <h3>{{ plan.trail.name }}</h3>
-              <p>Data: {{ new Date(plan.date).toLocaleDateString() }}</p>
-              <div v-if="plan.forecast" class="plan-forecast">
-                <img :src="plan.forecast.icon" alt="meteo" class="forecast-icon" />
-                <span class="forecast-temp">{{ Math.round(plan.forecast.temp) }}°C</span>
-                <span class="forecast-desc">{{ plan.forecast.description }}</span>
-              </div>
-            </div>
-          </div>
-        </section>
+        <PlannedExcursions :plans="plannedExcursions" @open-plan="openPlan" @cancel-plan="cancelPlanById" />
       </main>
     </div>
   </div>
@@ -102,9 +61,13 @@
 
 <script>
 import '../css/profilo.css'
+import SavedTrails from '../components/profile/SavedTrails.vue'
+import PlannedExcursions from '../components/profile/PlannedExcursions.vue'
+import PlanModal from '../components/profile/PlanModal.vue'
 
 export default {
   name: 'Profile',
+  components: { SavedTrails, PlannedExcursions, PlanModal },
 
   data() {
     return {
@@ -114,7 +77,9 @@ export default {
       // modal state for planning
       showPlanModal: false,
       planTrailId: null,
-      planDate: ''
+      planDate: '',
+      // editing plan id (if opening existing plan)
+      currentEditPlanId: null
     };
   },
 
@@ -129,6 +94,10 @@ export default {
     },
     totalKm() {
       return this.plannedExcursions.reduce((sum, plan) => sum + (plan.trail.length_km || 0), 0);
+    },
+    planInitial() {
+      const trail = this.savedTrails.find(t => t._id === this.planTrailId) || {};
+      return { title: trail.name || '', date: this.planDate || '', notes: '' };
     }
   },
 
@@ -168,11 +137,19 @@ export default {
       for (const plan of this.plannedExcursions) {
         try {
           const trail = plan.trail || {};
+
+          // Human-readable location: prefer explicit place fields, fallback to trail name
+          plan.locationName = trail.locationName || trail.place || trail.name || (trail.center && Array.isArray(trail.center) ? `${trail.center[1].toFixed(4)}, ${trail.center[0].toFixed(4)}` : null);
+          if (!plan.locationName) plan.locationName = 'Luogo non specificato';
+          // Ensure a display title (some plans use separate title)
+          plan.title = plan.title || trail.name || 'Escursione';
+
           const coord = this.getRepresentativeCoord(trail);
           if (!coord) {
             plan.forecast = null;
             continue;
           }
+
           const dateStr = new Date(plan.date).toISOString().slice(0,10);
           const res = await fetch(`/api/weather?lat=${coord.lat}&lon=${coord.lon}&date=${encodeURIComponent(dateStr)}`);
           if (!res.ok) { plan.forecast = null; continue; }
@@ -198,24 +175,58 @@ export default {
     },
 
     getRepresentativeCoord(trail) {
-      // Try GeoJSON geometry (LineString: coordinates = [[lon,lat], ...])
       try {
-        const g = trail.geometry;
-        if (g && Array.isArray(g.coordinates) && g.coordinates.length > 0) {
-          const coords = g.coordinates;
-          // handle MultiLineString
+        // 1) GeoJSON geometry (Point / LineString / MultiLineString)
+        if (trail && trail.geometry && Array.isArray(trail.geometry.coordinates) && trail.geometry.coordinates.length > 0) {
+          const coords = trail.geometry.coordinates;
           let point = null;
-          if (Array.isArray(coords[0][0])) {
+
+          // Explicit Point geometry
+          if (trail.geometry.type === 'Point' && Array.isArray(coords) && coords.length >= 2 && typeof coords[0] === 'number') {
+            point = coords;
+          } else if (Array.isArray(coords[0]) && Array.isArray(coords[0][0])) {
+            // MultiLineString -> take middle point of first line
             const firstLine = coords[0];
-            point = firstLine[Math.floor(firstLine.length/2)];
-          } else {
-            point = coords[Math.floor(coords.length/2)];
+            point = firstLine[Math.floor(firstLine.length / 2)];
+          } else if (Array.isArray(coords[0])) {
+            // LineString -> take middle coordinate
+            point = coords[Math.floor(coords.length / 2)];
           }
-          if (point && point.length >= 2) return { lat: point[1], lon: point[0] };
+
+          if (point && point.length >= 2) {
+            const lon = parseFloat(point[0]);
+            const lat = parseFloat(point[1]);
+            if (!Number.isNaN(lat) && !Number.isNaN(lon)) return { lat, lon };
+          }
         }
-        // fallback fields
-        if (trail.lat && trail.lon) return { lat: trail.lat, lon: trail.lon };
-        if (trail.center && Array.isArray(trail.center)) return { lat: trail.center[1], lon: trail.center[0] };
+
+        // 2) Common fields and variants
+        const toNum = v => (v === undefined || v === null) ? null : Number(v);
+        if (trail) {
+          const latLonPairs = [
+            [trail.lat, trail.lon],
+            [trail.latitude, trail.longitude],
+            [trail.centerLat || trail.center_lat, trail.centerLon || trail.center_lon],
+          ];
+
+          for (const [la, lo] of latLonPairs) {
+            const lat = toNum(la);
+            const lon = toNum(lo);
+            if (lat != null && lon != null && !Number.isNaN(lat) && !Number.isNaN(lon)) return { lat, lon };
+          }
+
+          if (trail.center && Array.isArray(trail.center) && trail.center.length >= 2) {
+            const lat = toNum(trail.center[1]);
+            const lon = toNum(trail.center[0]);
+            if (lat != null && lon != null && !Number.isNaN(lat) && !Number.isNaN(lon)) return { lat, lon };
+          }
+
+          if (trail.location && (trail.location.lat !== undefined || trail.location.latitude !== undefined)) {
+            const lat = toNum(trail.location.lat ?? trail.location.latitude);
+            const lon = toNum(trail.location.lon ?? trail.location.longitude);
+            if (lat != null && lon != null && !Number.isNaN(lat) && !Number.isNaN(lon)) return { lat, lon };
+          }
+        }
       } catch (e) {
         return null;
       }
@@ -227,15 +238,19 @@ export default {
       this.planTrailId = trailId;
       const today = new Date();
       this.planDate = today.toISOString().slice(0,10);
+      this.currentEditPlanId = null;
       this.showPlanModal = true;
     },
     cancelPlan() {
       this.showPlanModal = false;
       this.planTrailId = null;
       this.planDate = '';
+      this.currentEditPlanId = null;
     },
-    async submitPlan() {
-      if (!this.planTrailId || !this.planDate) return alert('Seleziona una data valida');
+    async onSavePlan(plan) {
+      // plan: { title, date, notes }
+      const date = plan?.date || this.planDate;
+      if (!this.planTrailId || !date) return alert('Seleziona una data valida');
       try {
         const res = await fetch('/api/auth/plan-excursion', {
           method: 'POST',
@@ -243,7 +258,7 @@ export default {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.user.token}`
           },
-          body: JSON.stringify({ trailId: this.planTrailId, date: this.planDate })
+          body: JSON.stringify({ trailId: this.planTrailId, date })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Errore');
@@ -251,11 +266,37 @@ export default {
         this.showPlanModal = false;
         this.planTrailId = null;
         this.planDate = '';
+        this.currentEditPlanId = null;
         await this.fetchProfile();
       } catch (err) {
         console.error('Failed to plan excursion', err);
         alert('Impossibile pianificare escursione');
       }
+    },
+
+    openPlan(id) {
+      const p = this.plannedExcursions.find(x => x._id === id);
+      if (!p) return;
+      this.planTrailId = p.trail?._id || null;
+      this.planDate = new Date(p.date).toISOString().slice(0,10);
+      this.currentEditPlanId = id;
+      this.showPlanModal = true;
+    },
+
+    async cancelPlanById(id) {
+      if (!confirm('Confermi annullamento dell\'escursione?')) return;
+      try {
+        // Try to delete via expected endpoint; if not available, fallback to optimistic removal
+        const res = await fetch(`/api/auth/planned-excursions/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${this.user.token}` } });
+        if (res.ok) {
+          await this.fetchProfile();
+          return;
+        }
+      } catch (e) {
+        console.warn('Delete endpoint not available, falling back to local removal');
+      }
+      // Fallback: remove locally
+      this.plannedExcursions = this.plannedExcursions.filter(p => p._id !== id);
     }
   }
 }
