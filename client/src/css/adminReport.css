@@ -1,11 +1,14 @@
+/* =========================================================
+   REPORT PREVIEW
+   ========================================================= */
 .report-text {
-	max-width: 480px;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+  max-width: 480px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.report-text .report-preview {
+.report-preview {
   display: block;
   width: 100%;
   text-align: left;
@@ -20,11 +23,14 @@
   text-overflow: ellipsis;
 }
 
+/* =========================================================
+   REPORT MEDIA
+   ========================================================= */
 .report-thumb {
-	max-width: 120px;
-	max-height: 80px;
-	object-fit: cover;
-	border-radius: 8px;
+  max-width: 120px;
+  max-height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
 }
 
 .report-full-text {
@@ -33,34 +39,70 @@
   color: var(--md-on-surface);
 }
 
-.report-full-image img { max-width: 100%; max-height: 360px; object-fit: contain; margin-top: 12px; border-radius: 8px }
+.report-full-image img {
+  max-width: 100%;
+  max-height: 360px;
+  object-fit: contain;
+  margin-top: 12px;
+  border-radius: 8px;
+}
 
+/* =========================================================
+   ACTIONS
+   ========================================================= */
 .actions button {
-	margin-right: 8px;
+  margin-right: 8px;
 }
 
-/* Modal buttons alignment and delete styling */
-.modal-actions { display:flex !important; gap:8px !important; justify-content:flex-end !important; align-items:center !important; margin-top:16px !important; flex-wrap: nowrap !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important }
-/* Force buttons to be inline and not grow to full width */
-.modal-actions button { display:inline-flex !important; align-items:center !important; justify-content:center !important; min-height:40px !important; white-space:nowrap !important; flex-shrink:0 !important; width: auto !important }
-.modal-actions .btn-primary, .modal-actions .btn-danger, .modal-actions .btn-secondary, .modal-actions .btn-delete { padding: 8px 14px; border-radius: 8px; font-weight:600 }
-
-/* Explicit ordering to keep reject/approve adjacent */
-.modal-actions .btn-danger { order: 1 }
-.modal-actions .btn-primary { order: 2 }
-.modal-actions .btn-delete { order: 3 }
-
-.btn-delete { background: transparent; color: var(--md-error); border: 1px solid rgba(176,0,32,0.12); cursor: pointer }
-.btn-delete:hover { background: rgba(176,0,32,0.04) }
-
-/* On very small screens reduce spacing and padding but keep buttons on one row */
-@media (max-width:480px) {
-  .modal-actions { gap:6px }
-  .modal-actions .btn-primary, .modal-actions .btn-danger, .modal-actions .btn-delete { padding: 6px 10px; font-size: 0.9rem }
+/* =========================================================
+   MODAL ACTIONS
+   ========================================================= */
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 16px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Modal close button (X) */
-.modal-content { position: relative }
+.modal-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  width: auto;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.modal-actions .btn-danger { order: 1; }
+.modal-actions .btn-primary { order: 2; }
+.modal-actions .btn-delete  { order: 3; }
+
+.btn-delete {
+  background: transparent;
+  color: var(--md-error);
+  border: 1px solid rgba(176,0,32,0.12);
+  cursor: pointer;
+}
+
+.btn-delete:hover {
+  background: rgba(176,0,32,0.04);
+}
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+.modal-content {
+  position: relative;
+}
+
 .modal-close {
   position: absolute;
   top: 12px;
@@ -74,27 +116,110 @@
   padding: 6px;
   border-radius: 6px;
 }
-.modal-close:hover { background: rgba(0,0,0,0.04) }
 
-/* Center table card and make it responsive */
-.admin-page .table-container {
-  margin: 0 auto;            /* center horizontally */
-  max-width: 920px;         /* same card width used elsewhere */
-  width: 100%;
+.modal-close:hover {
+  background: rgba(0,0,0,0.04);
+}
+
+/* =========================================================
+   LAYOUT
+   ========================================================= */
+.admin-page {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
   box-sizing: border-box;
 }
 
-/* Add horizontal padding on very small screens so the card doesn't touch viewport edges */
-@media (max-width: 600px) {
-  .admin-page .table-container {
-    padding: 0 12px;
-    max-width: 100%;
-  }
+.admin-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 28px;
+  align-items: start;
 }
 
-/* Ensure the inner table fits the centered card */
+/* 🔑 CRITICAL FIX — allow grid children to shrink */
+.admin-grid > * {
+  min-width: 0;
+}
+
+/* =========================================================
+   SIDE CARD (REPORT / USERS) – DESKTOP
+   ========================================================= */
+.report-card,
+.users-card,
+.side-card {
+  position: sticky;
+  top: 24px;
+  width: 100%;
+  max-width: 100%; /* segue sempre la larghezza disponibile */
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   TABLE CONTAINER
+   ========================================================= */
+.admin-page .table-container {
+  margin: 0 auto;
+  max-width: 100%; /* cresce/riduce con la finestra */
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Solo nella pagina segnalazioni: la card della tabella
+   non è flex:1, segue l'altezza del contenuto e non collassa
+   a certe larghezze della finestra. */
+.admin-reports-page .table-container {
+  flex: 0 0 auto;
+  max-height: none;
+}
+
 .admin-page .table-container .admin-table {
   width: 100%;
   table-layout: auto;
 }
 
+/* =========================================================
+  RESPONSIVE – SINGLE BREAKPOINT (allineato ad admin-profile/trails)
+  ========================================================= */
+@media (max-width: 768px) {
+
+  /* come gli altri due */
+  .admin-page {
+    padding: 16px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* come gli altri due: layout in colonna semplice */
+  .admin-grid {
+    display: block;
+  }
+
+  /* card laterale diventa normale */
+  .report-card,
+  .users-card,
+  .side-card {
+    position: static;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    min-width: 0;
+  }
+
+  .admin-page .admin-table {
+    width: 100%;
+  }
+
+  .admin-page .table-container,
+  .admin-page .table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: none;
+  }
+}

@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-page">
+  <div class="admin-page admin-reports-page">
     <div class="md-topbar">
       <div class="topbar-inner">
         <div class="topbar-left">
