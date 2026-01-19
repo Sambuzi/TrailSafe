@@ -56,78 +56,10 @@
   
 
 
-      <div class="table-container">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Difficoltà</th>
-              <th>Lunghezza (km)</th>
-              <th>Stato</th>
-              <th>Azioni</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="trail in filteredTrails" :key="trail._id" :class="{ 'status-closed': trail.status === 'Chiuso' }">
-
-              <td class="trail-name">{{ trail.name }}</td>
-              <td>
-                <span class="difficulty-badge" :class="getDifficultyClass(trail.difficulty)">
-                  {{ trail.difficulty }}
-                </span>
-              </td>
-              <td>{{ trail.length_km }}</td>
-              <td>
-                <span class="status-badge" :class="getStatusClass(trail.status)">
-                  {{ trail.status }}
-                </span>
-              </td>
-              <td class="actions">
-                <button class="btn-secondary edit-btn" @click="editTrail(trail)">Modifica</button>
-                <button class="btn-danger delete-btn" @click="deleteTrail(trail)">Elimina</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <TrailsList :trails="filteredTrails" :difficultyClass="getDifficultyClass" :statusClass="getStatusClass" @edit="editTrail" @delete="deleteTrail" />
     </div>
 
-    <!-- Modal per aggiungere/modificare percorso -->
-    <div v-if="showAddForm || editingTrail" class="modal-overlay" @click="closeModal">
-      <div class="modal-content" @click.stop>
-        <h2>{{ editingTrail ? 'Modifica Percorso' : 'Aggiungi Nuovo Percorso' }}</h2>
-        <form @submit.prevent="saveTrail" class="trail-form">
-          <div class="form-group">
-            <label>Nome:</label>
-            <input v-model="form.name" type="text" required />
-          </div>
-          <div class="form-group">
-            <label>Difficoltà:</label>
-            <select v-model="form.difficulty" required>
-              <option value="Facile">Facile</option>
-              <option value="Intermedio">Intermedio</option>
-              <option value="Difficile">Difficile</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Lunghezza (km):</label>
-            <input v-model.number="form.length_km" type="number" step="0.1" required />
-          </div>
-          <div class="form-group">
-            <label>Stato:</label>
-            <select v-model="form.status" required>
-              <option value="Aperto">Aperto</option>
-              <option value="Chiuso">Chiuso</option>
-              <option value="Parzialmente chiuso">Parzialmente chiuso</option>
-            </select>
-          </div>
-          <div class="form-actions">
-            <button type="button" class="btn-secondary trail-cancel-btn" @click="closeModal">Annulla</button>
-            <button type="submit" class="btn-primary">Salva</button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <TrailForm :visible="showAddForm || Boolean(editingTrail)" :initial="editingTrail" @save="onFormSave" @close="closeModal" />
     <!-- MODAL FILTRI -->
 <div v-if="showFilterModal" class="modal-overlay" @click="closeFilterModal">
   <div class="modal-content" @click.stop>
@@ -181,8 +113,12 @@
 </template>
 <script>
 import '../css/adminTrails.css'
+import TrailsList from '../components/admin/TrailsList.vue'
+import TrailForm from '../components/admin/TrailForm.vue'
+
 export default {
   name: 'Admin',
+  components: { TrailsList, TrailForm },
 
   data() {
     return {
@@ -274,23 +210,22 @@ export default {
       this.trails = this.trails.filter(t => t._id !== trail._id);
     },
 
-    async saveTrail() {
+    async onFormSave(formData) {
+      // If editing, include _id so backend updates; otherwise create new
       const isEdit = Boolean(this.editingTrail);
-      const url = isEdit
-        ? `http://localhost:3000/api/trails/${this.editingTrail._id}`
-        : 'http://localhost:3000/api/trails';
+      const url = isEdit ? `http://localhost:3000/api/trails/${this.editingTrail._id}` : 'http://localhost:3000/api/trails';
 
       const res = await fetch(url, {
         method: isEdit ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(this.form)
+        body: JSON.stringify(formData)
       });
 
       const saved = await res.json();
 
       if (isEdit) {
         const i = this.trails.findIndex(t => t._id === saved._id);
-        this.trails.splice(i, 1, saved);
+        if (i !== -1) this.trails.splice(i, 1, saved);
       } else {
         this.trails.push(saved);
       }
