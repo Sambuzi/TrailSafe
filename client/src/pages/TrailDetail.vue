@@ -5,7 +5,7 @@
     </div>
     <div class="card-body">
       <div class="map-section">
-        <MapView :trails="[trail]" />
+        <MapView :trails="[trail]" :reports="reports" />
       </div>
       <div class="details-section">
         <div v-if="loadingWeather" class="trail-weather">Caricamento meteo...</div>
@@ -27,6 +27,19 @@
         </p>
         <p><strong>Stato:</strong> {{ trail.status }}</p>
         <button class="save-btn" @click="saveTrail" :disabled="!isOpen">{{ isOpen ? 'Salva' : 'Non disponibile' }}</button>
+
+
+      </div>
+    </div>
+
+    <!-- Modal for full report -->
+    <div v-if="showReportModal" class="modal-overlay" @click="closeReportModal">
+      <div class="modal-content" @click.stop>
+        <button class="modal-close" @click="closeReportModal">&times;</button>
+        <h2>{{ selectedReport ? (selectedReport.user ? (selectedReport.user.name || selectedReport.user.email) : 'Segnalazione') : '' }}</h2>
+        <small class="muted">{{ selectedReport ? (new Date(selectedReport.createdAt).toLocaleString()) : '' }}</small>
+        <div class="modal-body" style="margin-top:12px">{{ selectedReport ? selectedReport.text : '' }}</div>
+        <div v-if="selectedReport && selectedReport.imageUrl" style="margin-top:12px"><img :src="selectedReport.imageUrl" style="max-width:100%;border-radius:8px" /></div>
       </div>
     </div>
   </div>
@@ -45,7 +58,10 @@ export default {
       trail: {},
       weather: null,
       loadingWeather: false,
-      weatherError: null
+      weatherError: null,
+      reports: [],
+      showReportModal: false,
+      selectedReport: null
     };
   },
   computed: {
@@ -100,9 +116,13 @@ export default {
       this.trail = await res.json();
       // after loading trail, fetch weather at trail coordinates
       this.fetchTrailWeather();
+      // load approved reports for this trail
+      this.loadReportsForTrail();
     } catch (err) {
       console.error('Failed to load trail', err);
     }
+    // load reports for this trail (approved only)
+    this.loadReportsForTrail();
   },
   methods: {
     saveTrail() {
@@ -163,6 +183,28 @@ export default {
       } finally {
         this.loadingWeather = false;
       }
+    },
+
+    async loadReportsForTrail() {
+      try {
+        const res = await fetch('/api/reports/approved');
+        if (!res.ok) return;
+        const all = await res.json();
+        const filtered = (Array.isArray(all) ? all : []).filter(r => r.trail && (r.trail._id === this.trail._id || String(r.trail) === String(this.trail._id)));
+        this.reports = filtered;
+      } catch (e) {
+        console.warn('Failed to load reports for trail', e);
+      }
+    },
+
+    openReport(r) {
+      this.selectedReport = r;
+      this.showReportModal = true;
+    },
+
+    closeReportModal() {
+      this.selectedReport = null;
+      this.showReportModal = false;
     }
   }
 }

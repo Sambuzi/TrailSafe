@@ -81,3 +81,9 @@
   }
 }
 
+/* Modal styles for report detail */
+.modal-overlay { position: fixed; inset: 0; display: flex; align-items: flex-start; justify-content: center; background: rgba(0,0,0,0.4); z-index: 9999; padding: 24px 16px 40px 16px; overflow-y: auto }
+.modal-content { width: min(720px, 98%); background: var(--md-surface, #fff); color: var(--md-on-surface, #111827); border-radius: 12px; padding: 20px; box-shadow: 0px 10px 30px rgba(16,24,40,0.18); max-height: calc(100vh - 80px); overflow: auto }
+.modal-close { position: absolute; top: 12px; right: 12px; background: transparent; border: none; font-size: 22px; cursor: pointer }
+.modal-body { white-space: pre-wrap; line-height: 1.45; color: #374151 }
+
