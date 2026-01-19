@@ -2,7 +2,7 @@
    REPORT PREVIEW
    ========================================================= */
 .report-text {
-  max-width: 480px;
+  max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -180,6 +180,15 @@
 .admin-page .table-container .admin-table {
   width: 100%;
   table-layout: auto;
+}
+
+/* Celle della tabella: testo sempre orizzontale.
+   Se lo spazio non basta compare lo scroll orizzontale
+   nella card, ma il testo non va mai lettera sotto lettera. */
+.admin-page .admin-table th,
+.admin-page .admin-table td {
+  white-space: nowrap;
+  word-break: normal;
 }
 
 /* =========================================================
