@@ -16,7 +16,9 @@
           <p class="user-role">{{ user?.user?.role || 'user' }}</p>
         </div>
 
-  
+        <div class="profile-actions">
+          <button class="btn btn-danger" @click="confirmDeleteAccount">Elimina account</button>
+        </div>
       </header>
 
       <main class="profile-body">
@@ -297,6 +299,30 @@ export default {
       }
       // Fallback: remove locally
       this.plannedExcursions = this.plannedExcursions.filter(p => p._id !== id);
+    },
+
+    confirmDeleteAccount() {
+      if (!confirm('Sei sicuro di voler eliminare definitivamente il tuo account? Questa azione è irreversibile.')) return;
+      this.deleteAccount();
+    },
+
+    async deleteAccount() {
+      try {
+        if (!this.user || !this.user.token) return alert('Utente non autenticato');
+        const res = await fetch('/api/auth/me', { method: 'DELETE', headers: { 'Authorization': `Bearer ${this.user.token}` } });
+        const body = await res.json().catch(() => null);
+        if (!res.ok) {
+          alert((body && (body.error || body.message)) || 'Eliminazione account fallita');
+          return;
+        }
+        // Remove local session and redirect to login
+        try { localStorage.removeItem('ts_user'); } catch (e) {}
+        alert('Account eliminato');
+        this.$router && this.$router.push('/login');
+      } catch (e) {
+        console.error('deleteAccount error', e);
+        alert('Impossibile contattare il server');
+      }
     }
   }
 }

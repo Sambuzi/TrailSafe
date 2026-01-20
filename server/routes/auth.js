@@ -205,4 +205,19 @@ router.put('/settings', require('../middleware/auth'), async (req, res) => {
   }
 });
 
+// Delete user account
+router.delete('/me', require('../middleware/auth'), async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+  
+    await user.deleteOne();
+    res.json({ message: 'Account deleted' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;

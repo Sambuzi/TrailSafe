@@ -138,7 +138,6 @@
   align-items: start;
 }
 
-/* 🔑 CRITICAL FIX — allow grid children to shrink */
 .admin-grid > * {
   min-width: 0;
 }
@@ -169,9 +168,7 @@
   -webkit-overflow-scrolling: touch;
 }
 
-/* Solo nella pagina segnalazioni: la card della tabella
-   non è flex:1, segue l'altezza del contenuto e non collassa
-   a certe larghezze della finestra. */
+
 .admin-reports-page .table-container {
   flex: 0 0 auto;
   max-height: none;
@@ -182,9 +179,7 @@
   table-layout: auto;
 }
 
-/* Celle della tabella: testo sempre orizzontale.
-   Se lo spazio non basta compare lo scroll orizzontale
-   nella card, ma il testo non va mai lettera sotto lettera. */
+
 .admin-page .admin-table th,
 .admin-page .admin-table td {
   white-space: nowrap;

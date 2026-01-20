@@ -72,7 +72,8 @@ router.delete('/:id', requireAuth, requireAdmin, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ error: 'User not found' });
-    await user.remove();
+    // use deleteOne() instead of deprecated remove()
+    await user.deleteOne();
     res.json({ message: 'User deleted' });
   } catch (err) {
     console.error(err);
