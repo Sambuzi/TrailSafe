@@ -10,9 +10,9 @@
         <div class="form-group">
           <label>Difficoltà:</label>
           <select v-model="local.difficulty" required>
-            <option value="Facile">Facile</option>
-            <option value="Intermedio">Intermedio</option>
-            <option value="Difficile">Difficile</option>
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
           </select>
         </div>
         <div class="form-group">
@@ -48,7 +48,7 @@ export default {
     return {
       local: {
         name: '',
-        difficulty: 'Facile',
+        difficulty: 'Easy',
         length_km: 0,
         status: 'Aperto'
       }
@@ -57,7 +57,7 @@ export default {
   watch: {
     initial: {
       handler (v) {
-        this.local = v ? { ...v } : { name: '', difficulty: 'Facile', length_km: 0, status: 'Aperto' }
+        this.local = v ? { ...v } : { name: '', difficulty: 'Easy', length_km: 0, status: 'Aperto' }
       },
       deep: true,
       immediate: true

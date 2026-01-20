@@ -83,7 +83,7 @@ export default {
 
         // choose color based on difficulty (simple mapping)
         const diff = (trail.difficulty || '').toLowerCase();
-        const color = diff.includes('facile') || diff.includes('easy') ? '#2e7d32' : (diff.includes('hard') || diff.includes('difficile') ? '#b71c1c' : '#388e3c');
+        const color = diff.includes('facile') || diff.includes('easy') ? '#2e7d32' : (diff.includes('hard') || diff.includes('difficile') ? '#b71c1c' : (diff.includes('medium') || diff.includes('intermedio') ? '#f59e0b' : '#388e3c'));
 
         const poly = L.polyline(latlngs, { color, weight: 4 })
           .bindPopup(`<b>${this.escapeHtml(trail.name)}</b><br>${this.escapeHtml(trail.difficulty || '')}<br><button onclick="viewTrailDetail('${trail._id}')">Vedi dettaglio</button>`);

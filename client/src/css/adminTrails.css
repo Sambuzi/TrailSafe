@@ -182,6 +182,27 @@
   max-height: calc(80vh - 260px);
 }
 
+/* Difficulty badges (Material 3 style colors)
+   - easy: green
+   - medium: yellow / amber
+   - hard: red */
+.difficulty-badge { padding: 4px 8px; border-radius: 999px; font-weight: 600; display: inline-flex; align-items: center; }
+.difficulty-badge.easy {
+  background: linear-gradient(180deg,#e8f5e9,#ddefd8);
+  color: #145426;
+  border: 1px solid rgba(27,94,32,0.06);
+}
+.difficulty-badge.medium {
+  background: linear-gradient(180deg,#fff8e1,#fff4d6);
+  color: #92400e; /* amber/dark */
+  border: 1px solid rgba(245,158,11,0.08);
+}
+.difficulty-badge.hard {
+  background: linear-gradient(180deg,#ffecec,#ffdede);
+  color: #991b1b;
+  border: 1px solid rgba(220,38,38,0.08);
+}
+
 /* Slightly rounded corners and pill-style for action buttons in the trails table */
 .actions .edit-btn,
 .actions .delete-btn {

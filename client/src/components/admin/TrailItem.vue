@@ -2,7 +2,7 @@
   <tr :class="{ 'status-closed': trail.status === 'Chiuso' }">
     <td class="trail-name">{{ trail.name }}</td>
     <td>
-      <span class="difficulty-badge" :class="difficultyClass(trail.difficulty)">{{ trail.difficulty }}</span>
+      <span class="difficulty-badge" :class="difficultyClass(trail.difficulty)">{{ displayDifficulty(trail.difficulty) }}</span>
     </td>
     <td>{{ trail.length_km }}</td>
     <td>
@@ -22,6 +22,18 @@ export default {
     trail: { type: Object, required: true },
     difficultyClass: { type: Function, default: () => '' },
     statusClass: { type: Function, default: () => '' }
+  },
+  methods: {
+    displayDifficulty(d) {
+      if (!d) return '—'
+      const v = d.toString().toLowerCase()
+      return {
+        'facile': 'Easy', 'easy': 'Easy',
+        'intermedio': 'Medium', 'medium': 'Medium',
+        'difficile': 'Hard', 'difficult': 'Hard', 'hard': 'Hard'
+      }[v] || d
+    }
   }
 }
+
 </script>

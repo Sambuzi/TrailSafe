@@ -55,7 +55,7 @@
           <div class="trail-body">
             <h4 class="trail-name">{{ trail.name }}</h4>
             <div class="trail-sub"> 
-              <span class="trail-difficulty chip">{{ trail.difficulty || 'N/A' }}</span>
+              <span :class="['trail-difficulty chip', getDiffClass(trail.difficulty)]">{{ trail.difficulty || 'N/A' }}</span>
               <span class="trail-dot">•</span>
               <span class="trail-length">{{ trail.length_km ? trail.length_km + ' km' : '—' }}</span>
             </div>
@@ -155,6 +155,15 @@ export default {
       } catch (err) {
         console.error('Failed to load difficulties', err);
       }
+    },
+    getDiffClass(d) {
+      if (!d) return '';
+      const v = d.toString().toLowerCase();
+      return {
+        'facile': 'easy', 'easy': 'easy',
+        'intermedio': 'medium', 'medium': 'medium',
+        'difficile': 'hard', 'difficult': 'hard', 'hard': 'hard'
+      }[v] || '';
     },
     async fetchTrails() {
       try {

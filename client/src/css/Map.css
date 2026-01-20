@@ -316,7 +316,10 @@
 .btn-ghost:active { transform: translateY(1px) }
 
 /* small green pill for difficulty */
-.trail-difficulty.chip { background: linear-gradient(180deg,#e8f5e9,#ddefd8); color:#145426; padding:6px 10px; border-radius:999px; font-size:13px; border: 1px solid rgba(27,94,32,0.06) }
+.trail-difficulty.chip { padding:6px 10px; border-radius:999px; font-size:13px }
+.trail-difficulty.easy { background: linear-gradient(180deg,#e8f5e9,#ddefd8); color:#145426; border: 1px solid rgba(27,94,32,0.06) }
+.trail-difficulty.medium { background: linear-gradient(180deg,#fff8e1,#fff4d6); color:#92400e; border: 1px solid rgba(245,158,11,0.08) }
+.trail-difficulty.hard { background: linear-gradient(180deg,#ffecec,#ffdede); color:#991b1b; border: 1px solid rgba(220,38,38,0.08) }
 
 /* responsive adjustments */
 @media (max-width: 900px) {

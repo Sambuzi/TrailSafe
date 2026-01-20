@@ -70,9 +70,9 @@
         <label>Difficoltà</label>
         <select v-model="filters.difficulty">
           <option value="">Tutte</option>
-          <option value="Facile">Facile</option>
-          <option value="Intermedio">Intermedio</option>
-          <option value="Difficile">Difficile</option>
+          <option value="Easy">Easy</option>
+          <option value="Medium">Medium</option>
+          <option value="Hard">Hard</option>
         </select>
       </div>
 
@@ -141,7 +141,7 @@ export default {
 
       form: {
         name: '',
-        difficulty: 'Facile',
+        difficulty: 'Easy',
         length_km: 0,
         status: 'Aperto'
       }
@@ -182,11 +182,13 @@ export default {
     },
 
     getDifficultyClass(difficulty) {
+      if (!difficulty) return 'easy';
+      const d = (difficulty || '').toString().toLowerCase();
       return {
-        Facile: 'easy',
-        Intermedio: 'medium',
-        Difficile: 'hard'
-      }[difficulty] || 'easy';
+        'facile': 'easy', 'easy': 'easy',
+        'intermedio': 'medium', 'medium': 'medium',
+        'difficile': 'hard', 'difficult': 'hard', 'hard': 'hard'
+      }[d] || 'easy';
     },
 
     getStatusClass(status) {
@@ -251,7 +253,7 @@ export default {
       this.editingTrail = null;
       this.form = {
         name: '',
-        difficulty: 'Facile',
+        difficulty: 'Easy',
         length_km: 0,
         status: 'Aperto'
       };

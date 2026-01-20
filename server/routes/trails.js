@@ -8,8 +8,8 @@ const Report = require('../models/Report');
 
 // In-memory fallback
 let inMemory = [
-  { id: 1, name: 'Sentiero dei Faggi', difficulty: 'Facile', status: 'Aperto' },
-  { id: 2, name: 'Creste del Monte', difficulty: 'Difficile', status: 'Parzialmente chiuso' }
+  { id: 1, name: 'Sentiero dei Faggi', difficulty: 'Easy', status: 'Aperto' },
+  { id: 2, name: 'Creste del Monte', difficulty: 'Hard', status: 'Parzialmente chiuso' }
 ];
 
 // --------------------------------------
