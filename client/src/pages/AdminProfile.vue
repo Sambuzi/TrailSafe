@@ -2,92 +2,12 @@
   <div class="admin-profile-page">
     <div class="admin-grid">
       <div class="left-column">
-        <div class="cards-row">
-          <div class="m3-card stats-aggregate">
-            <div class="stats-grid">
-              <div class="stat-item">
-                <div class="stat-label">Percorsi totali</div>
-                <div class="stat-value">{{ trailsCount !== null ? trailsCount : '—' }}</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-label">Segnalazioni</div>
-                <div class="stat-value">{{ reportsCount !== null ? reportsCount : '—' }}</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-label">Utenti totali</div>
-                <div class="stat-value">{{ usersCount !== null ? usersCount : '—' }}</div>
-              </div>
-            </div>
-            <div class="stats-footer muted">Aggiornato: {{ lastUpdated }}</div>
-          </div>
-        </div>
-
-        <div class="info-row">
-          <div class="m3-card admin-info-card">
-            <h3>Informazioni Admin</h3>
-            <div class="admin-info-grid">
-              <div><strong>Nome</strong></div><div>{{ profile.name || '—' }}</div>
-              <div><strong>Email</strong></div><div>{{ profile.email || '—' }}</div>
-              <div><strong>Ruolo</strong></div><div>{{ profile.role || '—' }}</div>
-              <div><strong>Ultimo aggiornamento</strong></div><div>{{ lastUpdated || '—' }}</div>
-            </div>
-          </div>
-        </div>
+        <AdminStats :trailsCount="trailsCount" :reportsCount="reportsCount" :usersCount="usersCount" :lastUpdated="lastUpdated" />
+        <AdminInfoCard :profile="profile" :lastUpdated="lastUpdated" />
       </div>
 
       <div class="right-column">
-        <div class="m3-card users-card">
-          <h3>Gestione Utenti</h3>
-          <div class="users-top">
-            <input v-model="q" placeholder="Cerca nome o email" @input="loadUsers" />
-            <button class="btn" @click="loadUsers">Cerca</button>
-          </div>
-
-          <div v-if="loadingUsers" class="muted">Caricamento utenti...</div>
-          <div v-else>
-            <div class="table-wrap">
-              <table class="admin-table users-table">
-                <thead>
-                  <tr><th>Nome</th><th>Email</th><th>Ruolo</th><th>Creato</th><th>Azioni</th></tr>
-                </thead>
-                <tbody>
-                  <tr v-for="u in users" :key="u._id">
-                    <td>{{ u.name || '—' }}</td>
-                    <td>{{ u.email }}</td>
-                    <td>{{ u.role }}</td>
-                    <td>{{ formatDate(u.createdAt) }}</td>
-                    <td class="actions-cell">
-                      <button class="btn icon" title="Modifica" @click="startEdit(u)">Modifica</button>
-                      <button class="btn icon danger" title="Elimina" @click="deleteUser(u)">Elimina</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="messages-row">
-              <div v-if="users.length === 0 && !usersError" class="muted">Nessun utente trovato.</div>
-              <div v-if="usersError" class="error">{{ usersError }}</div>
-            </div>
-
-            <div v-if="editingUser" class="edit-user-panel">
-              <h3>Modifica Utente</h3>
-              <label>Nome <input v-model="editingUser.name" /></label>
-              <label>Email <input v-model="editingUser.email" /></label>
-              <label>Ruolo
-                <select v-model="editingUser.role">
-                  <option value="user">user</option>
-                  <option value="admin">admin</option>
-                </select>
-              </label>
-              <label>Password (lascia vuoto per non cambiare) <input v-model="editingPassword" type="password"/></label>
-              <div class="edit-actions">
-                <button class="btn" @click="cancelEdit">Annulla</button>
-                <button class="btn primary" @click="saveUser">Salva</button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <UsersManagement />
       </div>
     </div>
   </div>
@@ -95,9 +15,13 @@
 
 <script>
 import '../css/AdminProfile.css'
+import AdminStats from '../components/admin/AdminStats.vue'
+import AdminInfoCard from '../components/admin/AdminInfoCard.vue'
+import UsersManagement from '../components/admin/UsersManagement.vue'
 
 export default {
   name: 'AdminProfile',
+  components: { AdminStats, AdminInfoCard, UsersManagement },
   data() {
     return {
       editMode: false,
@@ -105,14 +29,6 @@ export default {
       defaultAvatar: '/src/assets/default-avatar.png',
       password: '',
       activeTab: 'profile',
-
-      // users management state
-      q: '',
-      users: [],
-      loadingUsers: false,
-      usersError: null,
-      editingUser: null,
-      editingPassword: '',
 
       // stats
       trailsCount: null,
@@ -124,8 +40,6 @@ export default {
   mounted() {
     this.loadProfile()
     this.loadCounts()
-    // load users immediately so admin sees the list on page open
-    this.loadUsers()
   },
   methods: {
     getAuthHeader() {
@@ -214,56 +128,7 @@ export default {
         console.error(e)
         alert('Errore durante il salvataggio')
       }
-    },
-
-    // Users management
-    formatDate(d) { if (!d) return ''; return new Date(d).toLocaleString() },
-    async loadUsers() {
-      this.loadingUsers = true
-      this.usersError = null
-      this.users = []
-      try {
-        const url = '/api/users' + (this.q ? '?q=' + encodeURIComponent(this.q) : '')
-        const res = await fetch(url, { headers: this.getAuthHeader() })
-        if (!res.ok) {
-          const body = await res.json().catch(() => null)
-          this.usersError = (body && (body.error || body.message)) || `Errore caricamento utenti (${res.status})`
-          return
-        }
-        this.users = await res.json()
-      } catch (e) {
-        console.error('loadUsers exception', e)
-        this.usersError = 'Server non raggiungibile'
-      } finally { this.loadingUsers = false }
-    },
-    startEdit(u) { this.editingUser = { ...u }; this.editingPassword = '' },
-    cancelEdit() { this.editingUser = null; this.editingPassword = '' },
-    async saveUser() {
-      if (!this.editingUser) return
-      try {
-        const payload = { name: this.editingUser.name, email: this.editingUser.email, role: this.editingUser.role }
-        if (this.editingPassword) payload.password = this.editingPassword
-        const res = await fetch(`/api/users/${this.editingUser._id}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json', ...this.getAuthHeader() }, body: JSON.stringify(payload)
-        })
-        if (!res.ok) { const body = await res.json().catch(() => null); alert(body && body.error ? body.error : 'Aggiornamento fallito'); return }
-        const updated = await res.json()
-        const i = this.users.findIndex(x => x._id === updated._id)
-        if (i !== -1) this.users.splice(i, 1, updated)
-        this.editingUser = null; this.editingPassword = ''
-      } catch (e) { alert('Server non raggiungibile') }
-    },
-    async deleteUser(u) {
-      if (!confirm(`Eliminare l'utente ${u.email}?`)) return
-      try {
-        const res = await fetch(`/api/users/${u._id}`, { method: 'DELETE', headers: this.getAuthHeader() })
-        if (!res.ok) { const body = await res.json().catch(() => null); alert(body && body.error ? body.error : 'Eliminazione fallita'); return }
-        this.users = this.users.filter(x => x._id !== u._id)
-      } catch (e) { alert('Server non raggiungibile') }
     }
-  },
-  watch: {
-    activeTab(newVal) { if (newVal === 'users') this.loadUsers() }
   }
 }
 </script>
