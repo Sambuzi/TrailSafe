@@ -6,123 +6,7 @@ const Report = require('../models/Report');
 
 
 
-// In-memory fallback
-let inMemory = [
-  { id: 1, name: 'Sentiero dei Faggi', difficulty: 'Easy', status: 'Aperto' },
-  { id: 2, name: 'Creste del Monte', difficulty: 'Hard', status: 'Parzialmente chiuso' }
-];
-
-// --------------------------------------
-// SEED ROUTE → DEVE STARE PRIMA DI EXPORT
-// --------------------------------------
-router.get('/seed', async (req, res) => {
-  const samples = [
-
-    {
-  name: 'Sentiero Costiero',
-  difficulty: 'Facile',
-  length_km: 5.2,
-  geometry: {
-    type: 'LineString',
-    coordinates: [
-      [12.701, 43.968],
-      [12.705, 43.970],
-      [12.710, 43.973]
-    ]
-  }
-},
-
-{
-  "name": "Sentiero del Bosco Fitto",
-  "difficulty": "Easy",
-  "length_km": 3.5,
-  "status": "Aperto",
-  "geometry": {
-    "type": "LineString",
-    "coordinates": [
-      [12.530, 43.890],
-      [12.535, 43.892],
-      [12.540, 43.895]
-    ]
-  }
-},
-
-{
-  "name": "Cresta del Monte Carpegna",
-  "difficulty": "Hard",
-  "length_km": 11.8,
-  "status": "Aperto",
-  "geometry": {
-    "type": "LineString",
-    "coordinates": [
-      [12.300, 43.780],
-      [12.305, 43.785],
-      [12.310, 43.790],
-      [12.315, 43.795],
-      [12.320, 43.800],
-      [12.340, 43.820]
-    ]
-  }
-},
-{
-  "name": "Sentiero del Bosco Fitto",
-  "difficulty": "Easy",
-  "length_km": 3.8,
-  "status": "Aperto",
-  "geometry": {
-    "type": "LineString",
-    "coordinates": [
-      [12.530, 43.890],
-      [12.532, 43.892],
-      [12.535, 43.894],
-      [12.538, 43.895],
-      [12.540, 43.893],
-      [12.538, 43.891],
-      [12.535, 43.889],
-      [12.532, 43.888],
-      [12.530, 43.890]
-    ]
-  }
-},
-{
-  "name": "Alta Via delle Creste",
-  "difficulty": "Hard",
-  "length_km": 15.9,
-  "status": "Aperto",
-  "geometry": {
-    "type": "LineString",
-    "coordinates": [
-      [40.850, 16.480],
-      [40.853, 16.483],
-      [40.857, 16.487],
-      [40.861, 16.490],
-      [40.858, 16.493],
-      [40.862, 16.496],
-      [40.865, 16.498]
-    ]
-  }
-}
-
-
-
-
-
-  ];
-
-  if (mongoose.connection.readyState === 1) {
-    try {
-      await Trail.deleteMany({ name: { $in: samples.map(s => s.name) }});
-      const created = await Trail.insertMany(samples);
-      return res.json({ message: 'Seeded DB with sample trails', created });
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Seeding failed', details: err.message });
-    }
-  }
-
-  res.json({ message: 'DB not connected' });
-});
-
+// Note: seed route and in-memory fallback removed — routes now require a connected MongoDB.
 // --------------------------------------
 // NORMAL ROUTES
 // --------------------------------------
@@ -131,12 +15,11 @@ router.get('/', async (req, res) => {
     const items = await Trail.find().lean();
     return res.json(items);
   }
-  res.json(inMemory);
+  return res.status(500).json({ error: 'Database not connected' });
 });
 
 // NOTE: the route for fetching a single trail by id is declared later
 // to avoid conflicts with more specific routes like '/search' or '/difficulties'.
-
 router.post('/', async (req, res) => {
   if (mongoose.connection.readyState === 1) {
     try {
@@ -148,11 +31,7 @@ router.post('/', async (req, res) => {
       return res.status(500).json({ error: 'Failed to create trail' });
     }
   }
-
-  const nextId = inMemory.length ? Math.max(...inMemory.map(t => t.id)) + 1 : 1;
-  const newTrail = { id: nextId, ...req.body };
-  inMemory.push(newTrail);
-  res.status(201).json(newTrail);
+  return res.status(500).json({ error: 'Database not connected' });
 });
 
 // Search with filters: difficulty, name (partial), min_km
@@ -174,16 +53,8 @@ router.get('/search', async (req, res) => {
     }
   }
 
-  // fallback to in-memory filtering
-  let items = inMemory.slice();
-  if (difficulty) items = items.filter(t => t.difficulty === difficulty);
-  if (name) items = items.filter(t => t.name.toLowerCase().includes(name.toLowerCase()));
-  if (min_km) items = items.filter(t => (t.length_km || 0) >= parseFloat(min_km));
-
-  res.json(items);
+  return res.status(500).json({ error: 'Database not connected' });
 });
-
-// Return distinct difficulties for building filter UI
 router.get('/difficulties', async (req, res) => {
   if (mongoose.connection.readyState === 1) {
     try {
@@ -195,11 +66,8 @@ router.get('/difficulties', async (req, res) => {
     }
   }
 
-  // fallback
-  const diffs = Array.from(new Set(inMemory.map(t => t.difficulty))).filter(Boolean);
-  res.json(diffs);
+  return res.status(500).json({ error: 'Database not connected' });
 });
-
 // GET /api/trails/popular - Percorsi più popolari (più salvati)
 router.get('/popular', async (req, res) => {
   if (mongoose.connection.readyState !== 1) {
@@ -208,8 +76,6 @@ router.get('/popular', async (req, res) => {
 
   try {
     const User = require('../models/User');
-    
-    // Aggregation per contare quanti utenti hanno salvato ogni trail
     const popularTrails = await User.aggregate([
       { $unwind: '$savedTrails' },
       { $group: { _id: '$savedTrails', count: { $sum: 1 } } },
@@ -250,14 +116,12 @@ router.get('/count', async (req, res) => {
       const c = await Trail.countDocuments();
       return res.json({ count: c });
     }
-    return res.json({ count: inMemory.length });
+    return res.status(500).json({ error: 'Database not connected' });
   } catch (err) {
     console.error('Failed to get trails count', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
-
-
 
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
@@ -271,11 +135,7 @@ router.put('/:id', async (req, res) => {
       return res.status(500).json({ error: 'Failed to update trail' });
     }
   }
-
-  const index = inMemory.findIndex(t => t.id == id);
-  if (index === -1) return res.status(404).json({ error: 'Trail not found' });
-  inMemory[index] = { ...inMemory[index], ...req.body };
-  res.json(inMemory[index]);
+  return res.status(500).json({ error: 'Database not connected' });
 });
 
 router.delete('/:id', async (req, res) => {
@@ -290,23 +150,14 @@ router.delete('/:id', async (req, res) => {
       return res.status(500).json({ error: 'Failed to delete trail' });
     }
   }
-
-  const index = inMemory.findIndex(t => t.id == id);
-  if (index === -1) return res.status(404).json({ error: 'Trail not found' });
-  inMemory.splice(index, 1);
-  res.json({ message: 'Trail deleted' });
+  return res.status(500).json({ error: 'Database not connected' });
 });
 
-
-
-// Export DEFINITIVO (uno solo!)
-// single-trail route moved below to avoid accidental matching of static paths
 
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   if (mongoose.connection.readyState === 1) {
     try {
-      // defend against invalid ObjectId strings
       if (!mongoose.isValidObjectId(id)) return res.status(400).json({ error: 'Invalid trail id' });
       const trail = await Trail.findById(id).lean();
       if (!trail) return res.status(404).json({ error: 'Trail not found' });
@@ -316,9 +167,7 @@ router.get('/:id', async (req, res) => {
       return res.status(500).json({ error: 'Failed to fetch trail' });
     }
   }
-  const trail = inMemory.find(t => t.id == id);
-  if (!trail) return res.status(404).json({ error: 'Trail not found' });
-  res.json(trail);
+  return res.status(500).json({ error: 'Database not connected' });
 });
 
 module.exports = router;
