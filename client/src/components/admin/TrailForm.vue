@@ -1,8 +1,7 @@
 <template>
   <div v-if="visible" class="modal-overlay" @click="$emit('close')">
     <div class="modal-content" @click.stop>
-      <h2>{{ initial && initial._id ? 'Modifica Percorso' : 'Aggiungi Nuovo Percorso' }}</h2>
-      <form @submit.prevent="submit">
+      <h2>{{ initial && initial._id ? 'Modifica Percorso' : 'Aggiungi Nuovo Percorso' }}</h2>      <button class="modal-close" @click="$emit('close')" aria-label="Chiudi">&times;</button>      <form @submit.prevent="submit">
         <div class="form-group">
           <label>Nome:</label>
           <input v-model="local.name" type="text" required />
@@ -29,7 +28,6 @@
         </div>
 
         <div class="form-actions">
-          <button type="button" class="btn-secondary trail-cancel-btn" @click="$emit('close')">Annulla</button>
           <button type="submit" class="btn-primary">Salva</button>
         </div>
       </form>
