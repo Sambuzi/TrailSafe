@@ -7,6 +7,9 @@
       <p class="user-email">{{ user?.email || '—' }}</p>
       <p class="user-role">{{ user?.role || 'user' }}</p>
     </div>
+    <div class="profile-actions">
+      <slot name="actions" />
+    </div>
   </header>
 </template>
 
