@@ -24,7 +24,6 @@ html, body, #app {
   left: 0;
   top: 0;
   right: 0;
-  /* leave space for bottom nav on small screens */
   bottom: 72px;
   display: flex;
   flex-direction: column;

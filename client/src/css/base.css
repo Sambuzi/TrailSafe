@@ -144,7 +144,6 @@ body{font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvet
   border-radius: 999px;
   font-weight: 600;
 }
-/* common badge modifiers will extend this base class (e.g., .difficulty-badge, .status-badge) */
 .muted {
   color: var(--muted-color);
 }

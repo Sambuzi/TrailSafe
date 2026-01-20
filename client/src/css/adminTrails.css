@@ -182,10 +182,6 @@
   max-height: calc(80vh - 260px);
 }
 
-/* Difficulty badges (Material 3 style colors)
-   - easy: green
-   - medium: yellow / amber
-   - hard: red */
 .difficulty-badge { padding: 4px 8px; border-radius: 999px; font-weight: 600; display: inline-flex; align-items: center; }
 .difficulty-badge.easy {
   background: linear-gradient(180deg,#e8f5e9,#ddefd8);
@@ -270,8 +266,6 @@
     min-width: 0 !important;
     width: 100%;
   }
-
-  /* Bottone add non forza larghezza */
   .add-trail-btn {
     flex-shrink: 0;
   }
