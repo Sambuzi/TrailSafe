@@ -1,3 +1,4 @@
+<!-- Pagina AIExplore: interfaccia di chat per esplorare percorsi tramite intelligenza artificiale. -->
 <template>
   <div class="chat-page">
 

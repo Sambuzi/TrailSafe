@@ -1,3 +1,4 @@
+<!-- Pagina Settings: consente agli utenti di modificare le impostazioni del proprio account, come nome, livello e notifiche. Include anche la funzionalità di logout. -->
 <template>
   <div class="settings-page">
     <div class="settings-card">

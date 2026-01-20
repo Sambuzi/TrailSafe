@@ -1,3 +1,4 @@
+<!-- Pagina Notifications: mostra le notifiche e le segnalazioni recenti con opzioni per leggere, eliminare e visualizzare i dettagli. -->
 <template>
   <div class="notifications-page">
     <header class="notifications-header">

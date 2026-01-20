@@ -1,3 +1,4 @@
+<!-- Pagina Home: mostra la card meteo, i percorsi popolari, gli annunci e il modulo per segnalare problemi. -->
 <template>
   <div class="home-container">
 

@@ -1,3 +1,4 @@
+<!-- Pagina AdminReports: gestione delle segnalazioni degli utenti con visualizzazione, aggiornamento dello stato ed eliminazione. -->
 <template>
   <div class="admin-page admin-reports-page">
     <ReportsToolbar @refresh="loadReports" />

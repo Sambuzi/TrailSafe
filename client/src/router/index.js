@@ -1,3 +1,4 @@
+// Router: definisce le rotte client-side, associa il layout principale e le pagine dell'app.
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../pages/Login.vue'
 import Register from '../pages/Register.vue'

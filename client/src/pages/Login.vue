@@ -1,3 +1,4 @@
+<!-- Pagina Login: consente agli utenti di accedere con email e password. -->
 <template>
   <div class="login-root">
     <div class="login-card">

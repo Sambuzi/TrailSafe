@@ -1,13 +1,11 @@
+<!-- Pagina Map: mostra una mappa interattiva con percorsi escursionistici e filtri per ricerca, difficoltà e distanza. -->
 <template>
   <div class="map-page">
     <!-- AREA MAPPA -->
     <section :class="['map-container', { 'map-fixed': showMapOnly }]">
       <div class="map-placeholder">
-        <!-- Qui in futuro andrai a montare la mappa (Leaflet, Mapbox, ecc.) -->
         <MapView :trails="trails" />
       </div>
-
-      <!-- floating controls shown over the map when in map-only mode -->
       <div v-if="showMapOnly" class="map-overlay-controls">
         <div class="overlay-card search-card">
           <label class="card-title">Cerca</label>

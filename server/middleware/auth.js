@@ -1,3 +1,4 @@
+// Middleware di autenticazione: verifica il token JWT nelle richieste protette.
 const jwt = require('jsonwebtoken');
 
 module.exports = function(req, res, next) {

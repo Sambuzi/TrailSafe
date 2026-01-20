@@ -1,3 +1,4 @@
+<!-- Pagina AdminLogin rimossa: reindirizzamento alla pagina di login principale. -->
 <template>
   <div>
     <p>Pagina admin rimossa. Reindirizzamento in corso...</p>

@@ -1,3 +1,4 @@
+<!-- Pagina TrailDetail: mostra i dettagli di un percorso escursionistico specifico, inclusi meteo, difficoltà, lunghezza, tempo stimato e segnalazioni degli utenti. -->
 <template>
   <div class="trail-detail-card">
     <div class="card-header">

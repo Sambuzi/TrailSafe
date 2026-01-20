@@ -1,3 +1,4 @@
+<!-- Pagina AdminProfile: mostra le statistiche amministrative, le informazioni del profilo e la gestione degli utenti. -->
 <template>
   <div class="admin-profile-page">
     <div class="admin-grid">

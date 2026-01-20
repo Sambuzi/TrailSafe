@@ -1,3 +1,4 @@
+<!-- Pagina Register: consente agli utenti di creare un nuovo account fornendo nome, email e password. -->
 <template>
   <div class="login-root">
     <div class="login-card">

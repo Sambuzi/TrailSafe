@@ -1,3 +1,4 @@
+<!-- Pagina AdminTrails: gestione dei percorsi con funzionalità di visualizzazione, filtro, aggiunta, modifica ed eliminazione. -->
 <template>
   <div class="admin-page">
     <div class="md-topbar">
