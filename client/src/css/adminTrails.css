@@ -181,6 +181,40 @@
   border: 1px solid var(--md-outline);
   max-height: calc(80vh - 260px);
 }
+
+/* Slightly rounded corners and pill-style for action buttons in the trails table */
+.actions .edit-btn,
+.actions .delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px; /* pill like add button */
+  background: transparent; /* transparent background as requested */
+  border: 1px solid rgba(0,0,0,0.06);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.actions .edit-btn {
+  color: var(--md-primary);
+  border-color: rgba(51,105,30,0.12);
+}
+
+.actions .delete-btn {
+  color: var(--md-error);
+  border-color: rgba(176,0,32,0.12);
+  background: transparent; /* explicitly ensure no red background */
+}
+
+.actions .edit-btn:hover,
+.actions .delete-btn:hover {
+  background: var(--md-surface-variant);
+  box-shadow: 0 2px 8px rgba(15,23,42,0.12);
+  transform: translateY(-1px);
+}
+
 /* =========================
    FIX OVERFLOW TOPBAR MOBILE
    ========================= */
