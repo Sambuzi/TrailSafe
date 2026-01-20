@@ -145,6 +145,65 @@ select {
   border: 1px solid rgba(176,0,32,0.12);
 }
 
+.btn.small {
+  padding: 1px 6px;
+  font-size: 7px;
+  border-radius: 6px;
+  min-width: 36px;
+  border: none;
+  font-weight: 600;
+  line-height: 1;
+  margin-top: 4px;
+}
+
+.btn.small.edit {
+  background: #16a34a; 
+  color: #ffffff;
+}
+
+.btn.small.delete {
+  background: #dc2626; 
+  color: #ffffff;
+}
+
+.btn.small.edit:hover,
+.btn.small.delete:hover {
+  opacity: 0.9;
+}
+
+.user-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.user-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 5px;
+  box-shadow: none;
+}
+
+.icon-btn svg { width: 12px; height: 12px; display: block; }
+
+.icon-btn.edit { background: #16a34a; color: #fff; }
+.icon-btn.delete { background: #dc2626; color: #fff; }
+
+.icon-btn:focus { outline: 2px solid rgba(0,0,0,0.08); outline-offset: 2px; }
+
+@media (max-width: 480px) {
+  .user-actions { flex-direction: column; align-items: flex-start; }
+}
+
 /* =========================================================
    STATS CARDS
    ========================================================= */
