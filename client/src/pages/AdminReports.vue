@@ -1,72 +1,20 @@
 <template>
   <div class="admin-page admin-reports-page">
-    <div class="md-topbar">
-      <div class="topbar-inner">
-        <div class="topbar-left">
-          <h1>Segnalazioni Utenti</h1>
-          <p class="subtitle">Gestisci le segnalazioni inviate dagli utenti. Approva per pubblicare, rifiuta per scartare.</p>
-        </div>
-        <div class="topbar-right">
-          <button class="btn-primary" @click="loadReports">Aggiorna</button>
-        </div>
-      </div>
-    </div>
+    <ReportsToolbar @refresh="loadReports" />
 
     <div v-if="loading" class="loading">Caricamento segnalazioni...</div>
     <div v-else-if="error" class="error">{{ error }}</div>
 
     <div v-else class="admin-content">
-      <div class="table-container">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Trail</th>
-              <th>Utente</th>
-              <th>Testo</th>
-              <th>Gravità</th>
-              <th>Data</th>
-              <th>Immagine</th>
-              <th>Stato</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="r in reports" :key="r._id">
-              <td>{{ r.trail ? r.trail.name : '—' }}</td>
-              <td>{{ r.user ? (r.user.name || r.user.email) : '—' }}</td>
-              <td class="report-text">
-                <button class="report-preview" @click="showReport(r)" aria-label="Visualizza testo segnalazione">{{ r.text }}</button>
-              </td>
-              <td>{{ formatSeverity(r.severity) }}</td>
-              <td>{{ formatDate(r.createdAt) }}</td>
-              <td>
-                <div v-if="r.imageUrl">
-                  <img :src="r.imageUrl" alt="foto" class="report-thumb" />
-                </div>
-              </td>
-              <td>
-                <span :class="['status-badge', r.status]">{{ r.status }}</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <ReportsTable :reports="reports" @show="showReport" />
 
-      <!-- Modal per testo segnalazione -->
-      <div v-if="showReportModal" class="modal-overlay" @click="closeReportModal">
-        <div class="modal-content" @click.stop>
-          <h2>Segnalazione</h2>
-          <p class="report-full-text">{{ selectedReport ? selectedReport.text : '' }}</p>
-          <div v-if="selectedReport && selectedReport.imageUrl" class="report-full-image">
-            <img :src="selectedReport.imageUrl" alt="Immagine segnalazione" />
-          </div>
-          <button class="modal-close" @click="closeReportModal" aria-label="Chiudi">&times;</button>
-          <div class="form-actions modal-actions">
-            <button v-if="selectedReport && selectedReport.status !== 'rejected'" class="btn-danger" @click="updateStatus(selectedReport, 'rejected')">Rifiuta</button>
-            <button v-if="selectedReport && selectedReport.status !== 'approved'" class="btn-primary" @click="updateStatus(selectedReport, 'approved')">Approva</button>
-            <button class="btn-delete" @click="deleteReport(selectedReport)">Elimina</button>
-          </div>
-        </div>
-      </div>
+      <ReportModal
+        v-if="showReportModal"
+        :report="selectedReport"
+        @close="closeReportModal"
+        @update-status="s => updateStatus(selectedReport, s)"
+        @delete-report="() => deleteReport(selectedReport)"
+      />
     </div>
   </div>
 </template>
@@ -75,8 +23,13 @@
 import '../css/adminTrails.css'
 import '../css/adminReport.css'
 
+import ReportsToolbar from '../components/admin/ReportsToolbar.vue'
+import ReportsTable from '../components/admin/ReportsTable.vue'
+import ReportModal from '../components/admin/ReportModal.vue'
+
 export default {
   name: 'AdminReports',
+  components: { ReportsToolbar, ReportsTable, ReportModal },
   data() {
     return {
       reports: [],
