@@ -6,12 +6,3 @@
 <script>
 export default {}
 </script>
-<style scoped>
-.page { padding: 24px }
-
-@media (max-width: 900px) {
-  .page {
-    overflow-x: auto;
-  }
-}
-</style>

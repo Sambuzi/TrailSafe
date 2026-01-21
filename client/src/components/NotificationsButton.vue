@@ -11,6 +11,8 @@
 </template>
 
 <script>
+import '../css/Notifications.css';
+
 export default {
   name: 'NotificationsButton',
   data() {
@@ -126,11 +128,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.notifications { display: inline-block; margin-right: 8px }
-.bell { background: var(--m3-surface, rgba(255,255,255,0.06)); border: none; color: var(--m3-on-surface, #fff); cursor: pointer; padding: 8px; border-radius: 12px; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; position: relative }
-.bell:hover { background: rgba(255,255,255,0.12) }
-.m3-icon { width: 20px; height: 20px; display: block }
-.badge { position: absolute; top: 6px; right: 6px; background: #ff5252; color: white; font-size: 11px; padding: 2px 6px; border-radius: 999px; box-shadow: 0 2px 6px rgba(0,0,0,0.18) }
-</style>

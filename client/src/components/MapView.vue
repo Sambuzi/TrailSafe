@@ -5,6 +5,7 @@
 <script>
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import '../css/Map.css';
 
 export default {
   name: 'MapView',
@@ -127,11 +128,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-#map {
-  width: 100%;
-  height: 100%;
-  border-radius: 16px;
-}
-</style>

@@ -7,6 +7,7 @@
 <script>
 import { nextTick } from 'vue'
 import L from 'leaflet'
+import '../css/Map.css'
 
 export default {
   name: 'ReportMapPicker',
@@ -130,7 +131,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.map-container { width: 100%; height: 360px; border-radius: 12px; overflow: hidden; }
-</style>

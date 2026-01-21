@@ -210,12 +210,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.trail-weather { margin-bottom: 12px; padding: 10px; border-radius: 12px; background: var(--md-surface, #fff); box-shadow: 0 6px 18px rgba(16,24,40,0.06); }
-.trail-weather .row { display:flex; gap:12px; align-items:center }
-.trail-weather img { width:48px; height:48px }
-.trail-weather .temp { font-size:1.25rem; font-weight:600 }
-.trail-weather .desc { color:#475569 }
-.alert-condition { color: #b91c1c; font-weight: 700; background: rgba(249,115,22,0.06); padding: 2px 6px; border-radius: 6px }
-</style>
