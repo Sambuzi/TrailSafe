@@ -57,9 +57,9 @@ La piattaforma permette di consultare mappe, ricevere avvisi dinamici e gestire 
 
 **Setup iniziale (scaffold)**
 
-Ho aggiunto uno scaffolding minimale per cominciare subito a sviluppare:
 - `server/` — Express API (es. `GET /api/status`, `GET /api/trails`, `POST /api/trails/report`)
 - `client/` — Vue 3 + Vite minimal app che consuma le API
+- `report/` - relazione finale del progetto
 
 Comandi rapidi (PowerShell):
 
