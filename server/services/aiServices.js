@@ -28,7 +28,7 @@ function cosineSimilarity(vecA, vecB) {
   const normA = Math.sqrt(vecA.reduce((sum, val) => sum + val * val, 0));
   const normB = Math.sqrt(vecB.reduce((sum, val) => sum + val * val, 0));
 
-  // protezione contro divisione per zero
+
   if (normA === 0 || normB === 0) return 0;
 
   return dot / (normA * normB);
@@ -39,8 +39,7 @@ async function rankTrails(query, trails) {
 
   // Se USE_GEMINI è impostato, usa Gemini per classificare i percorsi
   if (process.env.USE_GEMINI === '1') {
-    // Limiti: non inviare troppi dati al modello in produzione;
-    // qui inviamo solo un breve riepilogo di ogni percorso
+
     const items = trails.map(t => ({
       id: t._id || t.id,
       name: t.name,
@@ -58,8 +57,6 @@ async function rankTrails(query, trails) {
     try {
       // low temperature and short output to limit cost
       const reply = await askGemini(prompt, { maxOutputTokens: 200, temperature: 0 });
-
-      // Proviamo a fare il parsing della risposta JSON in modo sicuro
       let parsed = null;
       try {
         parsed = JSON.parse(reply);
@@ -81,12 +78,11 @@ async function rankTrails(query, trails) {
         });
       }
 
-      // se Gemini ha risposto ma non in formato previsto, logghiamo e ritorniamo vuoto (Gemini-only mode)
+      
       console.warn('Gemini returned unexpected format, reply:', reply);
       return [];
     } catch (err) {
       console.error('Gemini ranking failed:', err && err.message ? err.message : err);
-      // In Gemini-only mode return an empty array and bubble up the error to log
       return [];
     }
   }
@@ -95,15 +91,12 @@ async function rankTrails(query, trails) {
   // calcola embedding della query
   const qEmb = await embedText(query);
 
-  // per ogni percorso usa embedding precomputato se disponibile, altrimenti lo calcola
   const scored = await Promise.all(trails.map(async (trail) => {
     let tEmb = trail.embedding;
     if (!tEmb) {
       const text = trailToText(trail);
       tEmb = await embedText(text);
     }
-
-    // protezione contro vettori non validi
     if (!Array.isArray(tEmb) || tEmb.length === 0) {
       return { ...trail, score: -Infinity };
     }
@@ -112,7 +105,6 @@ async function rankTrails(query, trails) {
     return { ...trail, score };
   }));
 
-  // ordina dal più rilevante al meno rilevante
   return scored.sort((a, b) => b.score - a.score);
 }
 

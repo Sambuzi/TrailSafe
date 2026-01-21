@@ -1,5 +1,5 @@
-/* Shared base stylesheet for the app - variables, common components and utilities */
-:root{
+/* Shared base stylesheet for the app */
+:root {
   --md-primary: #33691e;
   --md-on-primary: #ffffff;
   --md-surface: #ffffff;
@@ -18,9 +18,21 @@
 }
 
 /* Reset and utilities */
-*{box-sizing:border-box}
-html,body,#app{height:100%}
-body{font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color: #111827; background: #f8fafc}
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  color: #111827;
+  background: #f8fafc;
+}
 
 /* Cards */
 .card,
@@ -31,10 +43,11 @@ body{font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvet
   box-shadow: 0 1px 3px var(--md-shadow);
   border: 1px solid var(--md-outline);
 }
+
 .card-title,
 .m3-card h3 {
   margin: 0 0 12px 0;
-} 
+}
 
 /* Buttons (global) */
 .btn {
@@ -45,6 +58,7 @@ body{font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvet
   cursor: pointer;
   font-weight: 600;
 }
+
 /* Primary: support both old and new class names */
 .btn.primary,
 .btn-primary,
@@ -52,7 +66,8 @@ body{font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvet
   background: var(--md-primary);
   color: var(--md-on-primary);
   border-color: transparent;
-} 
+}
+
 /* Secondary / tonal / danger / ghost */
 .btn.secondary,
 .btn-secondary {
@@ -60,35 +75,43 @@ body{font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvet
   border: 1px solid var(--md-outline);
   color: inherit;
 }
+
 .btn.tonal,
 .btn.tonal {
   background: #e6f4e6;
   color: var(--md-primary);
   border-color: transparent;
 }
+
 .btn.danger,
 .btn-danger {
   background: transparent;
   color: var(--md-error);
   border: 1px solid rgba(176,0,32,0.12);
 }
+
 .btn.ghost,
 .btn-ghost {
   background: #ffffff;
   border: 1px solid rgba(0,0,0,0.06);
   color: inherit;
 }
+
 .btn.small {
   padding: 6px 10px;
   font-size: 12px;
 }
+
 .btn.icon {
   padding: 6px 10px;
   border-radius: 8px;
   background: transparent;
   border: 1px solid rgba(0,0,0,0.04);
-} 
-.btn.icon:hover{background: rgba(0,0,0,0.03)}
+}
+
+.btn.icon:hover {
+  background: rgba(0,0,0,0.03);
+}
 
 /* Modal */
 .modal-overlay {
@@ -102,6 +125,7 @@ body{font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvet
   padding: 24px 16px 40px 16px;
   overflow-y: auto;
 }
+
 .modal-content {
   width: min(820px, 98%);
   background: var(--md-surface);
@@ -112,11 +136,13 @@ body{font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvet
   max-height: calc(100vh - 80px);
   overflow: auto;
 }
+
 .modal-content h2 {
   margin: 0 0 12px 0;
   font-size: 1.25rem;
   font-weight: 600;
 }
+
 .modal-close {
   position: absolute;
   top: 12px;
@@ -126,11 +152,12 @@ body{font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvet
   font-size: 22px;
   cursor: pointer;
 }
+
 .modal-body {
   white-space: pre-wrap;
   line-height: 1.45;
   color: #374151;
-} 
+}
 
 /* Badges and helpers */
 .badge {
@@ -144,19 +171,22 @@ body{font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvet
   border-radius: 999px;
   font-weight: 600;
 }
+
 .muted {
   color: var(--muted-color);
 }
+
 .form-actions {
   display: flex;
   gap: 8px;
   margin-top: 8px;
   justify-content: flex-end;
 }
+
 .table-wrap {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-} 
+}
 
 /* Minor helpers */
 .center {

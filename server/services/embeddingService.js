@@ -20,7 +20,6 @@ async function embedText(text) {
     normalize: true
   });
 
-  // MongoDB non supporta Float32Array
   return Array.from(output.data);
 }
 

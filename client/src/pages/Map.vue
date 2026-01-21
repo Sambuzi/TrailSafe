@@ -192,12 +192,10 @@ export default {
       }
     },
     selectDifficulty(d) {
-      // toggle selection: click same difficulty to clear filter
       this.filters.difficulty = (this.filters.difficulty === d) ? '' : d;
       this.debouncedFetch();
     },
     onFiltersChange() {
-      // debounced to reduce requests while typing/moving UI
       this.debouncedFetch();
     }
     ,

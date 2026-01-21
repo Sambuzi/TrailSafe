@@ -190,7 +190,7 @@
 }
 .difficulty-badge.medium {
   background: linear-gradient(180deg,#fff8e1,#fff4d6);
-  color: #92400e; /* amber/dark */
+  color: #92400e; 
   border: 1px solid rgba(245,158,11,0.08);
 }
 .difficulty-badge.hard {
@@ -199,15 +199,14 @@
   border: 1px solid rgba(220,38,38,0.08);
 }
 
-/* Slightly rounded corners and pill-style for action buttons in the trails table */
 .actions .edit-btn,
 .actions .delete-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 6px 10px;
-  border-radius: 999px; /* pill like add button */
-  background: transparent; /* transparent background as requested */
+  border-radius: 999px; 
+  background: transparent; 
   border: 1px solid rgba(0,0,0,0.06);
   cursor: pointer;
   font-weight: 600;
@@ -222,7 +221,7 @@
 .actions .delete-btn {
   color: var(--md-error);
   border-color: rgba(176,0,32,0.12);
-  background: transparent; /* explicitly ensure no red background */
+
 }
 
 .actions .edit-btn:hover,
@@ -237,25 +236,25 @@
    ========================= */
 @media (max-width: 768px) {
 
-  /* La topbar può andare a capo */
+ 
   .topbar-inner {
     flex-wrap: wrap;
     justify-content: flex-start;
   }
 
-  /* Titolo occupa tutta la riga */
+ 
   .topbar-left {
     width: 100%;
   }
 
-  /* Area destra su nuova riga */
+ 
   .topbar-right {
     width: 100%;
     flex-wrap: wrap;
     justify-content: space-between;
   }
 
-  /* Search DEVE potersi restringere */
+ 
   .search-input {
     min-width: 0 !important;
     flex: 1 1 auto;

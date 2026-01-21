@@ -1,5 +1,3 @@
-.\/* Ensure the app fills the viewport and prevent horizontal page scroll *\/
-/* MainLayout.css — formatted: expanded braces and one declaration per line */
 
 /* Ensure the app fills the viewport and prevent horizontal page scroll */
 html,
@@ -9,7 +7,7 @@ body,
   width: 100%;
   margin: 0;
   padding: 0;
-  overflow: auto; /* allow page scrolling when content overflows */
+  overflow: auto; 
 }
 
 .layout {
@@ -21,7 +19,7 @@ body,
   display: flex;
   min-height: 100vh;
   background: linear-gradient(135deg, #1f4037, #6bbf9c);
-  overflow: visible; /* allow scrollable children */
+  overflow: visible; 
 }
 
 /* CONTENUTO PRINCIPALE */
@@ -35,7 +33,6 @@ body,
   flex-direction: column;
 }
 
-/* Desktop: reserve space on the left for the vertical sidebar */
 @media (min-width: 900px) {
   .main-area {
     left: 260px;
@@ -43,27 +40,24 @@ body,
   }
 }
 
-/* CONTENT: fixed area to the right of the sidebar; scrolls internally */
+
 .content {
   position: absolute;
   left: 0;
   right: 0;
-  top: 64px; /* below topbar */
-  bottom: 0; /* fill to bottom so this area can scroll internally */
-  padding: 12px 20px 24px 20px; /* more breathing room and bottom padding */
-  /* ensure content does not hide behind mobile bottom nav */
+  top: 64px; 
+  bottom: 0; 
+  padding: 12px 20px 24px 20px; 
   padding-bottom: calc(24px + 72px);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  /* Allow vertical scrolling inside the main content area; components still manage internal scroll */
   overflow: auto;
-  overflow-x: hidden; /* prevent horizontal scrolling */
-  min-height: 0; /* allow children to shrink inside this flex container */
+  overflow-x: hidden;
+  min-height: 0; 
 }
 
-/* Material 3 inspired thin scrollbars for scrollable areas */
 .content,
 .table-container {
   scrollbar-width: thin;
@@ -122,7 +116,7 @@ body,
   margin-left: auto;
 }
 
-/* Ensure the logo image never becomes oversized anywhere */
+
 img[alt="TrailSafe logo"] {
   max-width: 56px !important;
   max-height: 56px !important;

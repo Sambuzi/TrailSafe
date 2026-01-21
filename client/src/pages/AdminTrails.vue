@@ -214,7 +214,6 @@ export default {
     },
 
     async onFormSave(formData) {
-      // If editing, include _id so backend updates; otherwise create new
       const isEdit = Boolean(this.editingTrail);
       const url = isEdit ? `http://localhost:3000/api/trails/${this.editingTrail._id}` : 'http://localhost:3000/api/trails';
 

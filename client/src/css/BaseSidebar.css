@@ -17,10 +17,10 @@
 }
 
 .logo {
-  display: none; /* hide logo on very small nav to maximize space */
+  display: none; 
 }
 
-/* Ensure logo image is constrained and doesn't overflow */
+
 .logo img {
   max-width: 100%;
   max-height: 100%;
@@ -102,7 +102,7 @@ nav {
   }
 
   .logo img {
-    width: 56px; /* enforce exact size on desktop */
+    width: 56px; 
     height: 56px;
     max-width: 56px;
     max-height: 56px;
@@ -160,16 +160,16 @@ nav {
   flex-direction: column;
   gap: 4px;
   padding: 4px 8px;
-  flex: 0 0 auto; /* prevent item from growing/shrinking */
+  flex: 0 0 auto; 
 }
 
 
 .item .label {
-  display: none; /* hide labels on very small screens */
+  display: none; 
   font-size: 12px;
 }
 
-/* show the label of the active item for clarity on mobile */
+
 .item.my-active .label {
   display: block;
   font-size: 12px;

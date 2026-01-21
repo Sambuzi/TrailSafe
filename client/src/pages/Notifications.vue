@@ -82,7 +82,7 @@ export default {
         const notes = notesRes && notesRes.ok ? await notesRes.json() : [];
         const reports = reportsRes && reportsRes.ok ? await reportsRes.json() : [];
 
-        // normalize items: notifications first
+    
         const normNotes = notes.map(n => ({ _id: n._id, type: 'note', title: n.title || (n.trail ? n.trail.name : 'Avviso'), message: n.message, createdAt: n.createdAt, read: !!n.read }));
         const normReports = reports.map(r => ({ _id: r._id, type: 'report', title: r.title || (r.trail ? r.trail.name : 'Segnalazione'), text: r.text, imageUrl: r.imageUrl, createdAt: r.createdAt, read: true }));
         this.items = [...normNotes, ...normReports];
@@ -140,19 +140,13 @@ export default {
       if (idx === -1) return;
       const removed = this.items.splice(idx,1)[0];
       try {
-        // only notifications (type 'note') have delete endpoint
         if (item.type === 'note') {
           await fetch(`/api/notifications/${item._id}`, { method: 'DELETE', headers: this.getAuthHeader() });
-        } else {
-          // if it's a report, just remove locally (cannot delete public reports from client)
-          // noop server-side
         }
-        // if modal was open on this item, close it
         if (this.selectedNotice && this.selectedNotice._id === item._id) {
           this.closeNoticeModal();
         }
       } catch (e) {
-        // rollback
         this.items.splice(idx,0,removed);
         console.warn('delete failed', e);
       }
@@ -164,7 +158,6 @@ export default {
       try {
         await fetch('/api/notifications/mark-all-read', { method: 'POST', headers: { 'Content-Type': 'application/json', ...this.getAuthHeader() }, body: JSON.stringify({}) });
       } catch (e) {
-        // rollback
         orig.forEach(o => {
           const it = this.items.find(x => x._id === o.id);
           if (it) it.read = o.read;
@@ -174,7 +167,6 @@ export default {
     },
 
     showNotice(item) {
-      // open modal and mark as read if it's a notification
       this.selectedNotice = item;
       this.showNoticeModal = true;
       if (item.type === 'note' && !item.read) {

@@ -1,4 +1,3 @@
-/* Map.css — consolidated styles for Map page */
 
 :root {
   --md-primary: #1b5e20;
@@ -208,7 +207,7 @@
   padding: 10px;
   border-radius: 10px;
   border: none;
-  background: #e8f5e9; /* light green when not selected */
+  background: #e8f5e9; 
   color: #145426;
   font-weight: 500;
   cursor: pointer;
@@ -219,7 +218,7 @@
 }
 
 .category-btn.active {
-  background: #145426; /* dark green when selected */
+  background: #145426; 
   color: #fff;
 }
 
