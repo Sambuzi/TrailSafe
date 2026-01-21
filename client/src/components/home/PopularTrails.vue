@@ -8,7 +8,10 @@
           <div class="trail-left"><div class="thumb">🏞️</div></div>
           <div class="trail-body">
             <div class="trail-name">{{ trail.name }}</div>
-            <div class="trail-meta"><span class="badge difficulty">{{ trail.difficulty }}</span> <span class="chip">{{ trail.length_km }} km</span></div>
+            <div class="trail-meta">
+              <span v-if="trail.difficulty && trail.difficulty.toString().toLowerCase() !== 'medium'" class="badge difficulty">{{ trail.difficulty }}</span>
+              <span class="chip">{{ trail.length_km }} km</span>
+            </div>
             <div class="trail-sub">Stato: {{ trail.status || 'non specificato' }}</div>
           </div>
           <div class="trail-right"><button class="mini" @click="$emit('open-trail', trail._id)">Dettagli</button></div>
