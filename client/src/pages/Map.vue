@@ -16,7 +16,7 @@
           <label class="card-title">Difficoltà</label>
           <div class="overlay-row">
             <button
-              v-for="d in (difficulties && difficulties.length ? difficulties : ['Easy','Facile','Medium','Hard'])"
+              v-for="d in (normalizedDifficulties.length ? normalizedDifficulties : ['Easy','Medium','Hard'])"
               :key="d"
               :class="['overlay-btn', { active: filters.difficulty === d }]"
               @click="selectDifficulty(d)"
@@ -86,7 +86,7 @@
         <h3>Difficoltà</h3>
         <div class="category-buttons">
           <button
-            v-for="d in difficulties"
+            v-for="d in (normalizedDifficulties.length ? normalizedDifficulties : ['Easy','Medium','Hard'])"
             :key="d"
             :class="['category-btn', { active: filters.difficulty === d }]"
             @click="selectDifficulty(d)"
@@ -141,6 +141,20 @@ export default {
   mounted() {
     this.fetchDifficulties();
     this.fetchTrails();
+  },
+  computed: {
+    normalizedDifficulties() {
+      try {
+        const arr = this.difficulties || [];
+        const set = new Set((arr || []).map(x => (x || '').toString().toLowerCase().trim()));
+        const out = [];
+        if (set.has('easy') || set.has('facile')) out.push('Easy');
+        if (set.has('medium') || set.has('intermedio') || set.has('medio')) out.push('Medium');
+        if (set.has('hard') || set.has('difficile') || set.has('difficult')) out.push('Hard');
+        if (!out.length) return ['Easy','Medium','Hard'];
+        return out;
+      } catch (e) { return ['Easy','Medium','Hard'] }
+    }
   },
   methods: {
     // debounce timer id
