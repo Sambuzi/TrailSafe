@@ -34,14 +34,27 @@ export default {
     getAuthHeader() {
       try { const raw = localStorage.getItem('ts_user'); if (!raw) return {}; const parsed = JSON.parse(raw); if (!parsed || !parsed.token) return {}; return { Authorization: `Bearer ${parsed.token}` } } catch (e) { return {} }
     },
-    formatDate (iso) { try { return new Date(iso).toLocaleString() } catch (e) { return iso } },
+    // format date to local date only (no time)
+    formatDate (iso) { try { const d = new Date(iso); return d.toLocaleDateString(); } catch (e) { return iso } },
+    // return true if plan date is strictly after today's date (local)
+    isAfterToday(dateIso) {
+      try {
+        const d = new Date(dateIso);
+        const today = new Date();
+        const dYMD = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        const tYMD = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        return dYMD.getTime() > tYMD.getTime();
+      } catch (e) { return false }
+    },
     async loadPlans() {
       this.loading = true
       try {
         const res = await fetch('/api/auth/planned-excursions', { headers: this.getAuthHeader() })
         if (!res.ok) { this.plans = []; this.emitStats(); return }
         const j = await res.json()
-        this.plans = j.plannedExcursions || []
+        const allPlans = j.plannedExcursions || []
+        // keep only plans with date strictly after today
+        this.plans = allPlans.filter(p => this.isAfterToday(p.date))
         await this.fetchForecasts()
         this.emitStats()
       } catch (e) { console.error('loadPlans', e); this.plans = []; this.emitStats() } finally { this.loading = false }
@@ -56,7 +69,12 @@ export default {
           const coord = this.getRepresentativeCoord(trail)
           if (!coord) { plan.forecast = null; continue }
 
-          const dateStr = new Date(plan.date).toISOString().slice(0,10)
+          // build local YYYY-MM-DD string to request weather for the planned date
+          const d = new Date(plan.date);
+          const year = d.getFullYear();
+          const month = String(d.getMonth() + 1).padStart(2, '0');
+          const day = String(d.getDate()).padStart(2, '0');
+          const dateStr = `${year}-${month}-${day}`;
           const res = await fetch(`/api/weather?lat=${coord.lat}&lon=${coord.lon}&date=${encodeURIComponent(dateStr)}`)
           if (!res.ok) { plan.forecast = null; continue }
           const f = await res.json()
