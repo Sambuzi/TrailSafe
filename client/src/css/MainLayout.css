@@ -1,5 +1,10 @@
 .\/* Ensure the app fills the viewport and prevent horizontal page scroll *\/
-html, body, #app {
+/* MainLayout.css — formatted: expanded braces and one declaration per line */
+
+/* Ensure the app fills the viewport and prevent horizontal page scroll */
+html,
+body,
+#app {
   height: 100%;
   width: 100%;
   margin: 0;
@@ -18,6 +23,7 @@ html, body, #app {
   background: linear-gradient(135deg, #1f4037, #6bbf9c);
   overflow: visible; /* allow scrollable children */
 }
+
 /* CONTENUTO PRINCIPALE */
 .main-area {
   position: fixed;
@@ -31,8 +37,12 @@ html, body, #app {
 
 /* Desktop: reserve space on the left for the vertical sidebar */
 @media (min-width: 900px) {
-  .main-area { left: 260px; bottom: 0; }
+  .main-area {
+    left: 260px;
+    bottom: 0;
+  }
 }
+
 /* CONTENT: fixed area to the right of the sidebar; scrolls internally */
 .content {
   position: absolute;
@@ -54,40 +64,63 @@ html, body, #app {
 }
 
 /* Material 3 inspired thin scrollbars for scrollable areas */
-.content, .table-container {
+.content,
+.table-container {
   scrollbar-width: thin;
   scrollbar-color: rgba(16,24,32,0.12) transparent;
 }
-.content::-webkit-scrollbar, .table-container::-webkit-scrollbar {
+
+.content::-webkit-scrollbar,
+.table-container::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
-.content::-webkit-scrollbar-track, .table-container::-webkit-scrollbar-track {
+
+.content::-webkit-scrollbar-track,
+.table-container::-webkit-scrollbar-track {
   background: transparent;
   border-radius: 999px;
 }
-.content::-webkit-scrollbar-thumb, .table-container::-webkit-scrollbar-thumb {
+
+.content::-webkit-scrollbar-thumb,
+.table-container::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, rgba(16,24,32,0.12), rgba(16,24,32,0.08));
   border-radius: 999px;
   min-height: 28px;
   box-shadow: inset 0 0 0 3px rgba(255,255,255,0.02);
   transition: background 160ms ease, transform 160ms ease;
 }
-.content::-webkit-scrollbar-thumb:hover, .table-container::-webkit-scrollbar-thumb:hover {
+
+.content::-webkit-scrollbar-thumb:hover,
+.table-container::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, rgba(16,24,32,0.18), rgba(16,24,32,0.12));
 }
-.content::-webkit-scrollbar-thumb:active, .table-container::-webkit-scrollbar-thumb:active {
+
+.content::-webkit-scrollbar-thumb:active,
+.table-container::-webkit-scrollbar-thumb:active {
   transform: scale(0.98);
 }
 
 /* Desktop */
 @media (min-width: 900px) {
-  .main-area { left: 260px; }
+  .main-area {
+    left: 260px;
+  }
 }
 
 /* TOPBAR */
-.topbar { display: flex; justify-content: flex-end; align-items: center; padding: 12px 20px; color: #fff; height: 64px; }
-.topbar-right { margin-left: auto }
+.topbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 12px 20px;
+  color: #fff;
+  height: 64px;
+}
+
+.topbar-right {
+  margin-left: auto;
+}
 
 /* Ensure the logo image never becomes oversized anywhere */
 img[alt="TrailSafe logo"] {
@@ -99,12 +132,23 @@ img[alt="TrailSafe logo"] {
 }
 
 /* small logo text styling */
-.logo-text { width: 40px; height: 40px; display:flex; align-items:center; justify-content:center; font-weight:700; }
+.logo-text {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
 
 /* When a modal is open, hide the bottom/left nav so it cannot cover modal actions */
-body.modal-open .sidebar { display: none !important; }
+body.modal-open .sidebar {
+  display: none !important;
+}
 
 /* small screens: ensure modal has room above fixed bottom nav even if nav visible */
 @media (max-width: 900px) {
-  .modal-content { padding-bottom: 96px !important; }
+  .modal-content {
+    padding-bottom: 96px !important;
+  }
 }
