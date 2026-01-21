@@ -122,10 +122,4 @@ export default {
 }
 </script>
 
-<style scoped>
-.plan-today { background: linear-gradient(90deg, rgba(255,249,196,0.95), rgba(255,243,224,0.9)); border-left: 4px solid #f59e0b; padding: 12px; border-radius: 8px }
-.plan-forecast { display:flex; gap:8px; align-items:center; margin-top:8px }
-.forecast-icon { width:28px; height:28px }
-.forecast-temp { font-weight:600; margin-right:6px }
-.forecast-desc { color: #374151 }
-</style>
+
