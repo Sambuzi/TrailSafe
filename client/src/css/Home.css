@@ -277,12 +277,14 @@
 }
 
 .weather-scroll::-webkit-scrollbar-track,
-.saved-trails-scroll::-webkit-scrollbar-track {
+.saved-trails-scroll::-webkit-scrollbar-track,
+.announcements-scroll::-webkit-scrollbar-track {
   background: transparent;
 }
 
 .weather-scroll::-webkit-scrollbar-thumb,
-.saved-trails-scroll::-webkit-scrollbar-thumb {
+.saved-trails-scroll::-webkit-scrollbar-thumb,
+.announcements-scroll::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.28);
   border-radius: 8px;
   border: 2px solid transparent;
@@ -290,7 +292,8 @@
 }
 
 .weather-scroll:hover::-webkit-scrollbar-thumb,
-.saved-trails-scroll:hover::-webkit-scrollbar-thumb {
+.saved-trails-scroll:hover::-webkit-scrollbar-thumb,
+.announcements-scroll:hover::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.45);
 }
 
@@ -298,6 +301,13 @@
   list-style: none;
   padding: 0;
   margin-top: 12px;
+}
+
+/* enable internal scrolling inside the announcements card */
+.announcements-card .announcements-scroll {
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 6px;
 }
 
 .announcements-card li {

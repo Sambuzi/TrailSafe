@@ -3,7 +3,7 @@
     <h2>Annunci</h2>
     <div v-if="loading">Caricamento...</div>
     <div v-else>
-      <ul v-if="announcements.length">
+      <ul v-if="announcements.length" class="announcements-scroll">
         <li v-for="a in announcements" :key="a._id"><strong>{{ a.trail ? a.trail.name + ':' : '' }}</strong> {{ a.text }} <small class="muted">— {{ new Date(a.createdAt).toLocaleString() }}</small></li>
       </ul>
       <div v-else class="muted">Nessun annuncio</div>

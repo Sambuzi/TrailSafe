@@ -223,3 +223,48 @@
     justify-self: center;
   }
 }
+
+/* SettingsButton styles — match NotificationsButton styles */
+.settings {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.gear {
+  background: var(--m3-surface, rgba(255,255,255,0.06));
+  border: none;
+  color: var(--m3-on-surface, #fff);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.gear:hover {
+  background: rgba(255,255,255,0.12);
+}
+
+/* ensure icon sizing matches */
+.gear .m3-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+/* If we ever add a badge for settings, keep same style */
+.settings .badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: #ff5252;
+  color: white;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+}
